@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+
+board-check.png
+board-plate.png

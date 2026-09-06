@@ -1,0 +1,46 @@
+# The whole game: Redis, plus one container serving both the rules and the UI.
+#
+#   docker compose up --build          play
+#   docker compose up -d redis         just Redis, for local `npm run dev`
+#   docker compose down                stop
+#
+# Then open the machine's LAN address on every phone, e.g. http://192.168.1.41:3001/
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Rooms live in Redis and are worth keeping across a restart mid-party.
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      # Exposed so `npm run dev` on the host can use this same Redis.
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: "3001"
+      REDIS_URL: "redis://redis:6379"
+      # Same origin serves the client, so nothing cross-origin is needed.
+      CORS_ORIGIN: "*"
+    ports:
+      # 0.0.0.0 on purpose: every phone on the wifi has to reach this.
+      - "3001:3001"
+    depends_on:
+      redis:
+        # The server exits rather than start without Redis, so wait for a real
+        # PING instead of merely for the container to exist.
+        condition: service_healthy
+
+volumes:
+  redis-data:

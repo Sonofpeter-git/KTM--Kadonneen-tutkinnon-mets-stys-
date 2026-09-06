@@ -1,0 +1,4172 @@
+{
+  "version": 1,
+  "generator": "tools/generate-board.mjs",
+  "generatedAt": "2026-09-03T17:29:47.624Z",
+  "note": "Synthesised from real city coordinates. Replace wholesale once the physical board is traced.",
+  "aspectRatio": 0.5,
+  "basemap": {
+    "image": "/board.jpg",
+    "width": 1470,
+    "height": 2912,
+    "projection": "mercator",
+    "bounds": {
+      "north": 70.6,
+      "south": 58.8,
+      "west": 17.104,
+      "east": 31.296
+    }
+  },
+  "homeCities": {
+    "turku": [
+      "digit",
+      "date"
+    ],
+    "tampere": [
+      "tite"
+    ],
+    "oulu": [
+      "otit"
+    ],
+    "otaniemi": [
+      "tik"
+    ],
+    "lappeenranta": [
+      "cluster"
+    ],
+    "vaasa": [
+      "tutti"
+    ],
+    "jyvaskyla": [
+      "algo"
+    ]
+  },
+  "cruiseNode": "tukholma__maarianhamina_1",
+  "nodes": [
+    {
+      "id": "helsinki",
+      "name": "Helsinki",
+      "type": "city",
+      "x": 55.21,
+      "y": 90.4,
+      "edges": [
+        {
+          "target": "lahti__helsinki_1",
+          "type": "land"
+        },
+        {
+          "target": "otaniemi",
+          "type": "land"
+        },
+        {
+          "target": "porvoo__helsinki_0",
+          "type": "land"
+        },
+        {
+          "target": "tallinna__helsinki_0",
+          "type": "water"
+        }
+      ],
+      "lat": 60.17,
+      "lon": 24.94
+    },
+    {
+      "id": "otaniemi",
+      "name": "Otaniemi",
+      "type": "city",
+      "x": 54.44,
+      "y": 90.26,
+      "edges": [
+        {
+          "target": "hameenlinna__otaniemi_1",
+          "type": "land"
+        },
+        {
+          "target": "helsinki",
+          "type": "land"
+        },
+        {
+          "target": "otaniemi__lohja_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.19,
+      "lon": 24.83
+    },
+    {
+      "id": "porvoo",
+      "name": "Porvoo",
+      "type": "city",
+      "x": 60.29,
+      "y": 88.82,
+      "edges": [
+        {
+          "target": "porvoo__helsinki_0",
+          "type": "land"
+        },
+        {
+          "target": "kotka__porvoo_0",
+          "type": "land"
+        },
+        {
+          "target": "lahti__porvoo_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.39,
+      "lon": 25.66
+    },
+    {
+      "id": "lohja",
+      "name": "Lohja",
+      "type": "city",
+      "x": 49.08,
+      "y": 89.83,
+      "edges": [
+        {
+          "target": "hameenlinna__lohja_1",
+          "type": "land"
+        },
+        {
+          "target": "lohja__hanko_0",
+          "type": "land"
+        },
+        {
+          "target": "otaniemi__lohja_0",
+          "type": "land"
+        },
+        {
+          "target": "lohja__salo_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.25,
+      "lon": 24.07
+    },
+    {
+      "id": "hanko",
+      "name": "Hanko",
+      "type": "city",
+      "x": 41.33,
+      "y": 92.82,
+      "edges": [
+        {
+          "target": "lohja__hanko_0",
+          "type": "land"
+        },
+        {
+          "target": "maarianhamina__hanko_2",
+          "type": "water"
+        },
+        {
+          "target": "salo__hanko_0",
+          "type": "land"
+        },
+        {
+          "target": "turku__hanko_0",
+          "type": "land"
+        }
+      ],
+      "lat": 59.83,
+      "lon": 22.97
+    },
+    {
+      "id": "kotka",
+      "name": "Kotka",
+      "type": "city",
+      "x": 69.31,
+      "y": 88.25,
+      "edges": [
+        {
+          "target": "kouvola__kotka_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__kotka_2",
+          "type": "land"
+        },
+        {
+          "target": "kotka__porvoo_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.47,
+      "lon": 26.94
+    },
+    {
+      "id": "kouvola",
+      "name": "Kouvola",
+      "type": "city",
+      "x": 67.62,
+      "y": 85.34,
+      "edges": [
+        {
+          "target": "kouvola__kotka_0",
+          "type": "land"
+        },
+        {
+          "target": "lahti__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "lappeenranta__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__kouvola_1",
+          "type": "land"
+        }
+      ],
+      "lat": 60.87,
+      "lon": 26.7
+    },
+    {
+      "id": "lahti",
+      "name": "Lahti",
+      "type": "city",
+      "x": 60.29,
+      "y": 84.54,
+      "edges": [
+        {
+          "target": "hameenlinna__lahti_0",
+          "type": "land"
+        },
+        {
+          "target": "lahti__helsinki_0",
+          "type": "land"
+        },
+        {
+          "target": "lahti__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__lahti_1",
+          "type": "land"
+        },
+        {
+          "target": "lahti__porvoo_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.98,
+      "lon": 25.66
+    },
+    {
+      "id": "lappeenranta",
+      "name": "Lappeenranta",
+      "type": "city",
+      "x": 78.11,
+      "y": 83.95,
+      "edges": [
+        {
+          "target": "imatra__lappeenranta_0",
+          "type": "land"
+        },
+        {
+          "target": "lappeenranta__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__lappeenranta_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__lappeenranta_2",
+          "type": "land"
+        }
+      ],
+      "lat": 61.06,
+      "lon": 28.19
+    },
+    {
+      "id": "imatra",
+      "name": "Imatra",
+      "type": "city",
+      "x": 82.2,
+      "y": 83.14,
+      "edges": [
+        {
+          "target": "imatra__lappeenranta_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__imatra_2",
+          "type": "land"
+        },
+        {
+          "target": "savonlinna__imatra_0",
+          "type": "land"
+        }
+      ],
+      "lat": 61.17,
+      "lon": 28.77
+    },
+    {
+      "id": "mikkeli",
+      "name": "Mikkeli",
+      "type": "city",
+      "x": 71.63,
+      "y": 79.27,
+      "edges": [
+        {
+          "target": "jyvaskyla__mikkeli_1",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__lahti_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__lappeenranta_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__savonlinna_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus__mikkeli_0",
+          "type": "land"
+        }
+      ],
+      "lat": 61.69,
+      "lon": 27.27
+    },
+    {
+      "id": "savonlinna",
+      "name": "Savonlinna",
+      "type": "city",
+      "x": 82.98,
+      "y": 77.92,
+      "edges": [
+        {
+          "target": "savonlinna__imatra_0",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__savonlinna_1",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__savonlinna_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus__savonlinna_0",
+          "type": "land"
+        }
+      ],
+      "lat": 61.87,
+      "lon": 28.88
+    },
+    {
+      "id": "varkaus",
+      "name": "Varkaus",
+      "type": "city",
+      "x": 75.86,
+      "y": 74.5,
+      "edges": [
+        {
+          "target": "joensuu__varkaus_1",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__varkaus_1",
+          "type": "land"
+        },
+        {
+          "target": "kuopio__varkaus_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus__mikkeli_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus__savonlinna_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.32,
+      "lon": 27.87
+    },
+    {
+      "id": "kuopio",
+      "name": "Kuopio",
+      "type": "city",
+      "x": 74.52,
+      "y": 70.09,
+      "edges": [
+        {
+          "target": "iisalmi__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__kuopio_1",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__kuopio_1",
+          "type": "land"
+        },
+        {
+          "target": "kuopio__varkaus_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.89,
+      "lon": 27.68
+    },
+    {
+      "id": "joensuu",
+      "name": "Joensuu",
+      "type": "city",
+      "x": 89.18,
+      "y": 72.34,
+      "edges": [
+        {
+          "target": "joensuu__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "nurmes__joensuu_1",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__savonlinna_0",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__varkaus_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.6,
+      "lon": 29.76
+    },
+    {
+      "id": "nurmes",
+      "name": "Nurmes",
+      "type": "city",
+      "x": 84.81,
+      "y": 64.96,
+      "edges": [
+        {
+          "target": "nurmes__joensuu_0",
+          "type": "land"
+        },
+        {
+          "target": "kajaani__nurmes_1",
+          "type": "land"
+        },
+        {
+          "target": "kuhmo__nurmes_0",
+          "type": "land"
+        }
+      ],
+      "lat": 63.54,
+      "lon": 29.14
+    },
+    {
+      "id": "iisalmi",
+      "name": "Iisalmi",
+      "type": "city",
+      "x": 71.07,
+      "y": 64.8,
+      "edges": [
+        {
+          "target": "jyvaskyla__iisalmi_2",
+          "type": "land"
+        },
+        {
+          "target": "kajaani__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "iisalmi__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "ylivieska__iisalmi_1",
+          "type": "land"
+        }
+      ],
+      "lat": 63.56,
+      "lon": 27.19
+    },
+    {
+      "id": "kajaani",
+      "name": "Kajaani",
+      "type": "city",
+      "x": 74.87,
+      "y": 59.47,
+      "edges": [
+        {
+          "target": "kajaani__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "kuhmo__kajaani_1",
+          "type": "land"
+        },
+        {
+          "target": "kajaani__nurmes_0",
+          "type": "land"
+        },
+        {
+          "target": "oulu__kajaani_1",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi__kajaani_1",
+          "type": "land"
+        }
+      ],
+      "lat": 64.22,
+      "lon": 27.73
+    },
+    {
+      "id": "kuhmo",
+      "name": "Kuhmo",
+      "type": "city",
+      "x": 87.49,
+      "y": 60.2,
+      "edges": [
+        {
+          "target": "kuhmo__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "kuhmo__nurmes_0",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi__kuhmo_1",
+          "type": "land"
+        }
+      ],
+      "lat": 64.13,
+      "lon": 29.52
+    },
+    {
+      "id": "suomussalmi",
+      "name": "Suomussalmi",
+      "type": "city",
+      "x": 83.19,
+      "y": 53.92,
+      "edges": [
+        {
+          "target": "suomussalmi__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi__kuhmo_0",
+          "type": "land"
+        },
+        {
+          "target": "kuusamo__suomussalmi_1",
+          "type": "land"
+        }
+      ],
+      "lat": 64.89,
+      "lon": 28.91
+    },
+    {
+      "id": "kuusamo",
+      "name": "Kuusamo",
+      "type": "city",
+      "x": 85.16,
+      "y": 44.77,
+      "edges": [
+        {
+          "target": "kemijarvi__kuusamo_1",
+          "type": "land"
+        },
+        {
+          "target": "pudasjarvi__kuusamo_1",
+          "type": "land"
+        },
+        {
+          "target": "kuusamo__suomussalmi_0",
+          "type": "land"
+        }
+      ],
+      "lat": 65.96,
+      "lon": 29.19
+    },
+    {
+      "id": "oulu",
+      "name": "Oulu",
+      "type": "city",
+      "x": 58.95,
+      "y": 52.91,
+      "edges": [
+        {
+          "target": "oulu__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "kemi__oulu_1",
+          "type": "land"
+        },
+        {
+          "target": "oulu__pudasjarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "raahe__oulu_0",
+          "type": "land"
+        }
+      ],
+      "lat": 65.01,
+      "lon": 25.47
+    },
+    {
+      "id": "pudasjarvi",
+      "name": "Pudasjarvi",
+      "type": "city",
+      "x": 69.66,
+      "y": 49.94,
+      "edges": [
+        {
+          "target": "pudasjarvi__kuusamo_0",
+          "type": "land"
+        },
+        {
+          "target": "oulu__pudasjarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__pudasjarvi_2",
+          "type": "land"
+        }
+      ],
+      "lat": 65.36,
+      "lon": 26.99
+    },
+    {
+      "id": "raahe",
+      "name": "Raahe",
+      "type": "city",
+      "x": 51.97,
+      "y": 55.67,
+      "edges": [
+        {
+          "target": "kokkola__raahe_1",
+          "type": "land"
+        },
+        {
+          "target": "raahe__oulu_0",
+          "type": "land"
+        },
+        {
+          "target": "ylivieska__raahe_0",
+          "type": "land"
+        }
+      ],
+      "lat": 64.68,
+      "lon": 24.48
+    },
+    {
+      "id": "ylivieska",
+      "name": "Ylivieska",
+      "type": "city",
+      "x": 52.47,
+      "y": 60.61,
+      "edges": [
+        {
+          "target": "ylivieska__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "kokkola__ylivieska_0",
+          "type": "land"
+        },
+        {
+          "target": "ylivieska__raahe_0",
+          "type": "land"
+        }
+      ],
+      "lat": 64.08,
+      "lon": 24.55
+    },
+    {
+      "id": "kemi",
+      "name": "Kemi",
+      "type": "city",
+      "x": 52.54,
+      "y": 46.68,
+      "edges": [
+        {
+          "target": "kemi__oulu_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__kemi_1",
+          "type": "land"
+        },
+        {
+          "target": "tornio",
+          "type": "land"
+        }
+      ],
+      "lat": 65.74,
+      "lon": 24.56
+    },
+    {
+      "id": "tornio",
+      "name": "Tornio",
+      "type": "city",
+      "x": 49.65,
+      "y": 45.72,
+      "edges": [
+        {
+          "target": "haaparanta",
+          "type": "land"
+        },
+        {
+          "target": "kemi",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__tornio_1",
+          "type": "land"
+        }
+      ],
+      "lat": 65.85,
+      "lon": 24.15
+    },
+    {
+      "id": "rovaniemi",
+      "name": "Rovaniemi",
+      "type": "city",
+      "x": 60.78,
+      "y": 40,
+      "edges": [
+        {
+          "target": "kemijarvi__rovaniemi_1",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__kemi_0",
+          "type": "land"
+        },
+        {
+          "target": "kittila__rovaniemi_1",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__pudasjarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__rovaniemi_1",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__tornio_0",
+          "type": "land"
+        }
+      ],
+      "lat": 66.5,
+      "lon": 25.73
+    },
+    {
+      "id": "kemijarvi",
+      "name": "Kemijarvi",
+      "type": "city",
+      "x": 72.76,
+      "y": 38.12,
+      "edges": [
+        {
+          "target": "kemijarvi__kuusamo_0",
+          "type": "land"
+        },
+        {
+          "target": "kemijarvi__rovaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__kemijarvi_1",
+          "type": "land"
+        }
+      ],
+      "lat": 66.71,
+      "lon": 27.43
+    },
+    {
+      "id": "sodankyla",
+      "name": "Sodankyla",
+      "type": "city",
+      "x": 66.84,
+      "y": 31.64,
+      "edges": [
+        {
+          "target": "ivalo__sodankyla_2",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__kemijarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "kittila__sodankyla_1",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__rovaniemi_0",
+          "type": "land"
+        }
+      ],
+      "lat": 67.42,
+      "lon": 26.59
+    },
+    {
+      "id": "kittila",
+      "name": "Kittila",
+      "type": "city",
+      "x": 54.93,
+      "y": 29.5,
+      "edges": [
+        {
+          "target": "muonio__kittila_0",
+          "type": "land"
+        },
+        {
+          "target": "kittila__rovaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "kittila__sodankyla_0",
+          "type": "land"
+        }
+      ],
+      "lat": 67.65,
+      "lon": 24.9
+    },
+    {
+      "id": "muonio",
+      "name": "Muonio",
+      "type": "city",
+      "x": 46.34,
+      "y": 26.58,
+      "edges": [
+        {
+          "target": "kilpisjarvi__muonio_2",
+          "type": "land"
+        },
+        {
+          "target": "muonio__kittila_0",
+          "type": "land"
+        }
+      ],
+      "lat": 67.96,
+      "lon": 23.68
+    },
+    {
+      "id": "kilpisjarvi",
+      "name": "Kilpisjarvi",
+      "type": "city",
+      "x": 25.97,
+      "y": 15.99,
+      "edges": [
+        {
+          "target": "kilpisjarvi__muonio_0",
+          "type": "land"
+        },
+        {
+          "target": "utsjoki__kilpisjarvi_2",
+          "type": "land"
+        }
+      ],
+      "lat": 69.05,
+      "lon": 20.79
+    },
+    {
+      "id": "ivalo",
+      "name": "Ivalo",
+      "type": "city",
+      "x": 73.53,
+      "y": 19.84,
+      "edges": [
+        {
+          "target": "ivalo__inari_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari",
+          "type": "flight"
+        },
+        {
+          "target": "ivalo__sodankyla_0",
+          "type": "land"
+        }
+      ],
+      "lat": 68.66,
+      "lon": 27.54
+    },
+    {
+      "id": "inari",
+      "name": "Inari",
+      "type": "city",
+      "x": 69.94,
+      "y": 17.38,
+      "edges": [
+        {
+          "target": "ivalo__inari_0",
+          "type": "land"
+        },
+        {
+          "target": "inari__utsjoki_0",
+          "type": "land"
+        }
+      ],
+      "lat": 68.91,
+      "lon": 27.03
+    },
+    {
+      "id": "utsjoki",
+      "name": "Utsjoki",
+      "type": "city",
+      "x": 69.94,
+      "y": 7.27,
+      "edges": [
+        {
+          "target": "inari__utsjoki_1",
+          "type": "land"
+        },
+        {
+          "target": "utsjoki__kilpisjarvi_0",
+          "type": "land"
+        }
+      ],
+      "lat": 69.91,
+      "lon": 27.03
+    },
+    {
+      "id": "kokkola",
+      "name": "Kokkola",
+      "type": "city",
+      "x": 42.46,
+      "y": 62.55,
+      "edges": [
+        {
+          "target": "pietarsaari",
+          "type": "land"
+        },
+        {
+          "target": "kokkola__raahe_0",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__kokkola_1",
+          "type": "land"
+        },
+        {
+          "target": "kokkola__ylivieska_0",
+          "type": "land"
+        }
+      ],
+      "lat": 63.84,
+      "lon": 23.13
+    },
+    {
+      "id": "pietarsaari",
+      "name": "Pietarsaari",
+      "type": "city",
+      "x": 39.43,
+      "y": 63.84,
+      "edges": [
+        {
+          "target": "kokkola",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__pietarsaari_1",
+          "type": "land"
+        },
+        {
+          "target": "vaasa__pietarsaari_0",
+          "type": "land"
+        }
+      ],
+      "lat": 63.68,
+      "lon": 22.7
+    },
+    {
+      "id": "vaasa",
+      "name": "Vaasa",
+      "type": "city",
+      "x": 31.82,
+      "y": 68.45,
+      "edges": [
+        {
+          "target": "kauhajoki__vaasa_0",
+          "type": "land"
+        },
+        {
+          "target": "vaasa__pietarsaari_0",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__vaasa_0",
+          "type": "land"
+        },
+        {
+          "target": "uumaja__vaasa_1",
+          "type": "water"
+        }
+      ],
+      "lat": 63.1,
+      "lon": 21.62
+    },
+    {
+      "id": "seinajoki",
+      "name": "Seinajoki",
+      "type": "city",
+      "x": 40.42,
+      "y": 70.87,
+      "edges": [
+        {
+          "target": "jyvaskyla__seinajoki_2",
+          "type": "land"
+        },
+        {
+          "target": "kauhajoki__seinajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__kokkola_0",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__pietarsaari_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__seinajoki_2",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__vaasa_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.79,
+      "lon": 22.84
+    },
+    {
+      "id": "kauhajoki",
+      "name": "Kauhajoki",
+      "type": "city",
+      "x": 35.77,
+      "y": 73.65,
+      "edges": [
+        {
+          "target": "pori__kauhajoki_1",
+          "type": "land"
+        },
+        {
+          "target": "kauhajoki__seinajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "kauhajoki__vaasa_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.43,
+      "lon": 22.18
+    },
+    {
+      "id": "pori",
+      "name": "Pori",
+      "type": "city",
+      "x": 33.09,
+      "y": 80.77,
+      "edges": [
+        {
+          "target": "pori__kauhajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "rauma__pori_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__pori_1",
+          "type": "land"
+        }
+      ],
+      "lat": 61.49,
+      "lon": 21.8
+    },
+    {
+      "id": "rauma",
+      "name": "Rauma",
+      "type": "city",
+      "x": 31.05,
+      "y": 83.43,
+      "edges": [
+        {
+          "target": "rauma__pori_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__rauma_1",
+          "type": "land"
+        },
+        {
+          "target": "rauma__turku_0",
+          "type": "land"
+        },
+        {
+          "target": "rauma__uusikaupunki_0",
+          "type": "land"
+        }
+      ],
+      "lat": 61.13,
+      "lon": 21.51
+    },
+    {
+      "id": "uusikaupunki",
+      "name": "Uusikaupunki",
+      "type": "city",
+      "x": 30.34,
+      "y": 85.85,
+      "edges": [
+        {
+          "target": "rauma__uusikaupunki_0",
+          "type": "land"
+        },
+        {
+          "target": "uusikaupunki__turku_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.8,
+      "lon": 21.41
+    },
+    {
+      "id": "turku",
+      "name": "Turku / Abo",
+      "type": "city",
+      "x": 36.4,
+      "y": 88.39,
+      "edges": [
+        {
+          "target": "turku__hanko_0",
+          "type": "land"
+        },
+        {
+          "target": "maarianhamina__turku_1",
+          "type": "water"
+        },
+        {
+          "target": "rauma__turku_1",
+          "type": "land"
+        },
+        {
+          "target": "salo__turku_0",
+          "type": "land"
+        },
+        {
+          "target": "uusikaupunki__turku_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.45,
+      "lon": 22.27
+    },
+    {
+      "id": "salo",
+      "name": "Salo",
+      "type": "city",
+      "x": 42.46,
+      "y": 88.82,
+      "edges": [
+        {
+          "target": "hameenlinna__salo_1",
+          "type": "land"
+        },
+        {
+          "target": "salo__hanko_0",
+          "type": "land"
+        },
+        {
+          "target": "lohja__salo_0",
+          "type": "land"
+        },
+        {
+          "target": "salo__turku_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.39,
+      "lon": 23.13
+    },
+    {
+      "id": "hameenlinna",
+      "name": "Hameenlinna",
+      "type": "city",
+      "x": 51.83,
+      "y": 84.46,
+      "edges": [
+        {
+          "target": "hameenlinna__lahti_0",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__lohja_0",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__otaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__salo_0",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__tampere_0",
+          "type": "land"
+        }
+      ],
+      "lat": 60.99,
+      "lon": 24.46
+    },
+    {
+      "id": "tampere",
+      "name": "Tampere",
+      "type": "city",
+      "x": 46.9,
+      "y": 80.69,
+      "edges": [
+        {
+          "target": "hameenlinna__tampere_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__tampere_1",
+          "type": "land"
+        },
+        {
+          "target": "tampere__pori_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__rauma_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__seinajoki_0",
+          "type": "land"
+        }
+      ],
+      "lat": 61.5,
+      "lon": 23.76
+    },
+    {
+      "id": "jyvaskyla",
+      "name": "Jyvaskyla",
+      "type": "city",
+      "x": 60.92,
+      "y": 75.11,
+      "edges": [
+        {
+          "target": "jyvaskyla__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__mikkeli_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__seinajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__tampere_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__varkaus_0",
+          "type": "land"
+        }
+      ],
+      "lat": 62.24,
+      "lon": 25.75
+    },
+    {
+      "id": "pietari",
+      "name": "Pietari",
+      "type": "city",
+      "x": 93.26,
+      "y": 92.11,
+      "edges": [
+        {
+          "target": "pietari__imatra_0",
+          "type": "land"
+        },
+        {
+          "target": "ivalo",
+          "type": "flight"
+        },
+        {
+          "target": "pietari__kotka_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__lappeenranta_0",
+          "type": "land"
+        }
+      ],
+      "lat": 59.93,
+      "lon": 30.34
+    },
+    {
+      "id": "tallinna",
+      "name": "Tallinna",
+      "type": "city",
+      "x": 53.88,
+      "y": 95.56,
+      "edges": [
+        {
+          "target": "tallinna__helsinki_0",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__tallinna_2",
+          "type": "water"
+        }
+      ],
+      "lat": 59.44,
+      "lon": 24.75
+    },
+    {
+      "id": "maarianhamina",
+      "name": "Maarianhamina",
+      "type": "city",
+      "x": 19.98,
+      "y": 90.9,
+      "edges": [
+        {
+          "target": "maarianhamina__hanko_0",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__maarianhamina_1",
+          "type": "water"
+        },
+        {
+          "target": "maarianhamina__turku_0",
+          "type": "water"
+        }
+      ],
+      "lat": 60.1,
+      "lon": 19.94
+    },
+    {
+      "id": "tukholma",
+      "name": "Tukholma",
+      "type": "city",
+      "x": 6.81,
+      "y": 96.33,
+      "edges": [
+        {
+          "target": "tukholma__maarianhamina_0",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__tallinna_0",
+          "type": "water"
+        }
+      ],
+      "lat": 59.33,
+      "lon": 18.07
+    },
+    {
+      "id": "uumaja",
+      "name": "Uumaja",
+      "type": "city",
+      "x": 22.24,
+      "y": 62.63,
+      "edges": [
+        {
+          "target": "uumaja__haaparanta_0",
+          "type": "land"
+        },
+        {
+          "target": "uumaja__vaasa_0",
+          "type": "water"
+        }
+      ],
+      "lat": 63.83,
+      "lon": 20.26
+    },
+    {
+      "id": "haaparanta",
+      "name": "Haaparanta",
+      "type": "border",
+      "x": 49.3,
+      "y": 45.81,
+      "edges": [
+        {
+          "target": "tornio",
+          "type": "land"
+        },
+        {
+          "target": "uumaja__haaparanta_2",
+          "type": "land"
+        }
+      ],
+      "lat": 65.84,
+      "lon": 24.1
+    },
+    {
+      "id": "uumaja__haaparanta_0",
+      "name": "",
+      "type": "dot",
+      "x": 29.01,
+      "y": 58.43,
+      "edges": [
+        {
+          "target": "uumaja",
+          "type": "land"
+        },
+        {
+          "target": "uumaja__haaparanta_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "uumaja__haaparanta_1",
+      "name": "",
+      "type": "dot",
+      "x": 35.77,
+      "y": 54.22,
+      "edges": [
+        {
+          "target": "uumaja__haaparanta_0",
+          "type": "land"
+        },
+        {
+          "target": "uumaja__haaparanta_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "uumaja__haaparanta_2",
+      "name": "",
+      "type": "dot",
+      "x": 42.54,
+      "y": 50.02,
+      "edges": [
+        {
+          "target": "uumaja__haaparanta_1",
+          "type": "land"
+        },
+        {
+          "target": "haaparanta",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__lahti_0",
+      "name": "",
+      "type": "dot",
+      "x": 56.06,
+      "y": 84.5,
+      "edges": [
+        {
+          "target": "hameenlinna",
+          "type": "land"
+        },
+        {
+          "target": "lahti",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__lohja_0",
+      "name": "",
+      "type": "dot",
+      "x": 50.91,
+      "y": 86.25,
+      "edges": [
+        {
+          "target": "hameenlinna",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__lohja_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__lohja_1",
+      "name": "",
+      "type": "dot",
+      "x": 50,
+      "y": 88.04,
+      "edges": [
+        {
+          "target": "hameenlinna__lohja_0",
+          "type": "land"
+        },
+        {
+          "target": "lohja",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__otaniemi_0",
+      "name": "",
+      "type": "dot",
+      "x": 52.7,
+      "y": 86.39,
+      "edges": [
+        {
+          "target": "hameenlinna",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__otaniemi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__otaniemi_1",
+      "name": "",
+      "type": "dot",
+      "x": 53.57,
+      "y": 88.33,
+      "edges": [
+        {
+          "target": "hameenlinna__otaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "otaniemi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__salo_0",
+      "name": "",
+      "type": "dot",
+      "x": 48.71,
+      "y": 85.91,
+      "edges": [
+        {
+          "target": "hameenlinna",
+          "type": "land"
+        },
+        {
+          "target": "hameenlinna__salo_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__salo_1",
+      "name": "",
+      "type": "dot",
+      "x": 45.58,
+      "y": 87.37,
+      "edges": [
+        {
+          "target": "hameenlinna__salo_0",
+          "type": "land"
+        },
+        {
+          "target": "salo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "hameenlinna__tampere_0",
+      "name": "",
+      "type": "dot",
+      "x": 49.36,
+      "y": 82.57,
+      "edges": [
+        {
+          "target": "hameenlinna",
+          "type": "land"
+        },
+        {
+          "target": "tampere",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lohja__hanko_0",
+      "name": "",
+      "type": "dot",
+      "x": 45.21,
+      "y": 91.32,
+      "edges": [
+        {
+          "target": "lohja",
+          "type": "land"
+        },
+        {
+          "target": "hanko",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "maarianhamina__hanko_0",
+      "name": "",
+      "type": "dot",
+      "x": 25.32,
+      "y": 91.38,
+      "edges": [
+        {
+          "target": "maarianhamina",
+          "type": "water"
+        },
+        {
+          "target": "maarianhamina__hanko_1",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "maarianhamina__hanko_1",
+      "name": "",
+      "type": "dot",
+      "x": 30.66,
+      "y": 91.86,
+      "edges": [
+        {
+          "target": "maarianhamina__hanko_0",
+          "type": "water"
+        },
+        {
+          "target": "maarianhamina__hanko_2",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "maarianhamina__hanko_2",
+      "name": "",
+      "type": "dot",
+      "x": 35.99,
+      "y": 92.34,
+      "edges": [
+        {
+          "target": "maarianhamina__hanko_1",
+          "type": "water"
+        },
+        {
+          "target": "hanko",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "salo__hanko_0",
+      "name": "",
+      "type": "dot",
+      "x": 41.9,
+      "y": 90.82,
+      "edges": [
+        {
+          "target": "salo",
+          "type": "land"
+        },
+        {
+          "target": "hanko",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "turku__hanko_0",
+      "name": "",
+      "type": "dot",
+      "x": 38.86,
+      "y": 90.6,
+      "edges": [
+        {
+          "target": "turku",
+          "type": "land"
+        },
+        {
+          "target": "hanko",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lahti__helsinki_0",
+      "name": "",
+      "type": "dot",
+      "x": 58.6,
+      "y": 86.49,
+      "edges": [
+        {
+          "target": "lahti",
+          "type": "land"
+        },
+        {
+          "target": "lahti__helsinki_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lahti__helsinki_1",
+      "name": "",
+      "type": "dot",
+      "x": 56.9,
+      "y": 88.45,
+      "edges": [
+        {
+          "target": "lahti__helsinki_0",
+          "type": "land"
+        },
+        {
+          "target": "helsinki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "porvoo__helsinki_0",
+      "name": "",
+      "type": "dot",
+      "x": 57.75,
+      "y": 89.61,
+      "edges": [
+        {
+          "target": "porvoo",
+          "type": "land"
+        },
+        {
+          "target": "helsinki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tallinna__helsinki_0",
+      "name": "",
+      "type": "dot",
+      "x": 54.55,
+      "y": 92.98,
+      "edges": [
+        {
+          "target": "tallinna",
+          "type": "water"
+        },
+        {
+          "target": "helsinki",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__iisalmi_0",
+      "name": "",
+      "type": "dot",
+      "x": 63.46,
+      "y": 72.53,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__iisalmi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__iisalmi_1",
+      "name": "",
+      "type": "dot",
+      "x": 66,
+      "y": 69.96,
+      "edges": [
+        {
+          "target": "jyvaskyla__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__iisalmi_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__iisalmi_2",
+      "name": "",
+      "type": "dot",
+      "x": 68.53,
+      "y": 67.38,
+      "edges": [
+        {
+          "target": "jyvaskyla__iisalmi_1",
+          "type": "land"
+        },
+        {
+          "target": "iisalmi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kajaani__iisalmi_0",
+      "name": "",
+      "type": "dot",
+      "x": 72.97,
+      "y": 62.14,
+      "edges": [
+        {
+          "target": "kajaani",
+          "type": "land"
+        },
+        {
+          "target": "iisalmi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "iisalmi__kuopio_0",
+      "name": "",
+      "type": "dot",
+      "x": 72.79,
+      "y": 67.44,
+      "edges": [
+        {
+          "target": "iisalmi",
+          "type": "land"
+        },
+        {
+          "target": "kuopio",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ylivieska__iisalmi_0",
+      "name": "",
+      "type": "dot",
+      "x": 58.67,
+      "y": 62.01,
+      "edges": [
+        {
+          "target": "ylivieska",
+          "type": "land"
+        },
+        {
+          "target": "ylivieska__iisalmi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ylivieska__iisalmi_1",
+      "name": "",
+      "type": "dot",
+      "x": 64.87,
+      "y": 63.4,
+      "edges": [
+        {
+          "target": "ylivieska__iisalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "iisalmi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "imatra__lappeenranta_0",
+      "name": "",
+      "type": "dot",
+      "x": 80.16,
+      "y": 83.55,
+      "edges": [
+        {
+          "target": "imatra",
+          "type": "land"
+        },
+        {
+          "target": "lappeenranta",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__imatra_0",
+      "name": "",
+      "type": "dot",
+      "x": 90.5,
+      "y": 89.87,
+      "edges": [
+        {
+          "target": "pietari",
+          "type": "land"
+        },
+        {
+          "target": "pietari__imatra_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__imatra_1",
+      "name": "",
+      "type": "dot",
+      "x": 87.73,
+      "y": 87.63,
+      "edges": [
+        {
+          "target": "pietari__imatra_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__imatra_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__imatra_2",
+      "name": "",
+      "type": "dot",
+      "x": 84.97,
+      "y": 85.38,
+      "edges": [
+        {
+          "target": "pietari__imatra_1",
+          "type": "land"
+        },
+        {
+          "target": "imatra",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "savonlinna__imatra_0",
+      "name": "",
+      "type": "dot",
+      "x": 82.59,
+      "y": 80.53,
+      "edges": [
+        {
+          "target": "savonlinna",
+          "type": "land"
+        },
+        {
+          "target": "imatra",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ivalo__inari_0",
+      "name": "",
+      "type": "dot",
+      "x": 71.74,
+      "y": 18.61,
+      "edges": [
+        {
+          "target": "ivalo",
+          "type": "land"
+        },
+        {
+          "target": "inari",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "inari__utsjoki_0",
+      "name": "",
+      "type": "dot",
+      "x": 69.94,
+      "y": 14.01,
+      "edges": [
+        {
+          "target": "inari",
+          "type": "land"
+        },
+        {
+          "target": "inari__utsjoki_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "inari__utsjoki_1",
+      "name": "",
+      "type": "dot",
+      "x": 69.94,
+      "y": 10.64,
+      "edges": [
+        {
+          "target": "inari__utsjoki_0",
+          "type": "land"
+        },
+        {
+          "target": "utsjoki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ivalo__sodankyla_0",
+      "name": "",
+      "type": "dot",
+      "x": 71.86,
+      "y": 22.79,
+      "edges": [
+        {
+          "target": "ivalo",
+          "type": "land"
+        },
+        {
+          "target": "ivalo__sodankyla_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ivalo__sodankyla_1",
+      "name": "",
+      "type": "dot",
+      "x": 70.19,
+      "y": 25.74,
+      "edges": [
+        {
+          "target": "ivalo__sodankyla_0",
+          "type": "land"
+        },
+        {
+          "target": "ivalo__sodankyla_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ivalo__sodankyla_2",
+      "name": "",
+      "type": "dot",
+      "x": 68.51,
+      "y": 28.69,
+      "edges": [
+        {
+          "target": "ivalo__sodankyla_1",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__kuopio_0",
+      "name": "",
+      "type": "dot",
+      "x": 84.29,
+      "y": 71.59,
+      "edges": [
+        {
+          "target": "joensuu",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__kuopio_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__kuopio_1",
+      "name": "",
+      "type": "dot",
+      "x": 79.41,
+      "y": 70.84,
+      "edges": [
+        {
+          "target": "joensuu__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "kuopio",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "nurmes__joensuu_0",
+      "name": "",
+      "type": "dot",
+      "x": 86.27,
+      "y": 67.42,
+      "edges": [
+        {
+          "target": "nurmes",
+          "type": "land"
+        },
+        {
+          "target": "nurmes__joensuu_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "nurmes__joensuu_1",
+      "name": "",
+      "type": "dot",
+      "x": 87.72,
+      "y": 69.88,
+      "edges": [
+        {
+          "target": "nurmes__joensuu_0",
+          "type": "land"
+        },
+        {
+          "target": "joensuu",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__savonlinna_0",
+      "name": "",
+      "type": "dot",
+      "x": 87.11,
+      "y": 74.2,
+      "edges": [
+        {
+          "target": "joensuu",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__savonlinna_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__savonlinna_1",
+      "name": "",
+      "type": "dot",
+      "x": 85.05,
+      "y": 76.06,
+      "edges": [
+        {
+          "target": "joensuu__savonlinna_0",
+          "type": "land"
+        },
+        {
+          "target": "savonlinna",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__varkaus_0",
+      "name": "",
+      "type": "dot",
+      "x": 84.74,
+      "y": 73.06,
+      "edges": [
+        {
+          "target": "joensuu",
+          "type": "land"
+        },
+        {
+          "target": "joensuu__varkaus_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "joensuu__varkaus_1",
+      "name": "",
+      "type": "dot",
+      "x": 80.3,
+      "y": 73.78,
+      "edges": [
+        {
+          "target": "joensuu__varkaus_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__kuopio_0",
+      "name": "",
+      "type": "dot",
+      "x": 65.45,
+      "y": 73.44,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__kuopio_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__kuopio_1",
+      "name": "",
+      "type": "dot",
+      "x": 69.99,
+      "y": 71.76,
+      "edges": [
+        {
+          "target": "jyvaskyla__kuopio_0",
+          "type": "land"
+        },
+        {
+          "target": "kuopio",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__mikkeli_0",
+      "name": "",
+      "type": "dot",
+      "x": 64.49,
+      "y": 76.5,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__mikkeli_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__mikkeli_1",
+      "name": "",
+      "type": "dot",
+      "x": 68.06,
+      "y": 77.88,
+      "edges": [
+        {
+          "target": "jyvaskyla__mikkeli_0",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__seinajoki_0",
+      "name": "",
+      "type": "dot",
+      "x": 55.8,
+      "y": 74.05,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__seinajoki_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__seinajoki_1",
+      "name": "",
+      "type": "dot",
+      "x": 50.67,
+      "y": 72.99,
+      "edges": [
+        {
+          "target": "jyvaskyla__seinajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__seinajoki_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__seinajoki_2",
+      "name": "",
+      "type": "dot",
+      "x": 45.55,
+      "y": 71.93,
+      "edges": [
+        {
+          "target": "jyvaskyla__seinajoki_1",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__tampere_0",
+      "name": "",
+      "type": "dot",
+      "x": 56.25,
+      "y": 76.97,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__tampere_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__tampere_1",
+      "name": "",
+      "type": "dot",
+      "x": 51.57,
+      "y": 78.83,
+      "edges": [
+        {
+          "target": "jyvaskyla__tampere_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__varkaus_0",
+      "name": "",
+      "type": "dot",
+      "x": 65.9,
+      "y": 74.91,
+      "edges": [
+        {
+          "target": "jyvaskyla",
+          "type": "land"
+        },
+        {
+          "target": "jyvaskyla__varkaus_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "jyvaskyla__varkaus_1",
+      "name": "",
+      "type": "dot",
+      "x": 70.88,
+      "y": 74.7,
+      "edges": [
+        {
+          "target": "jyvaskyla__varkaus_0",
+          "type": "land"
+        },
+        {
+          "target": "varkaus",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuhmo__kajaani_0",
+      "name": "",
+      "type": "dot",
+      "x": 83.28,
+      "y": 59.96,
+      "edges": [
+        {
+          "target": "kuhmo",
+          "type": "land"
+        },
+        {
+          "target": "kuhmo__kajaani_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuhmo__kajaani_1",
+      "name": "",
+      "type": "dot",
+      "x": 79.08,
+      "y": 59.71,
+      "edges": [
+        {
+          "target": "kuhmo__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "kajaani",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kajaani__nurmes_0",
+      "name": "",
+      "type": "dot",
+      "x": 78.18,
+      "y": 61.3,
+      "edges": [
+        {
+          "target": "kajaani",
+          "type": "land"
+        },
+        {
+          "target": "kajaani__nurmes_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kajaani__nurmes_1",
+      "name": "",
+      "type": "dot",
+      "x": 81.5,
+      "y": 63.13,
+      "edges": [
+        {
+          "target": "kajaani__nurmes_0",
+          "type": "land"
+        },
+        {
+          "target": "nurmes",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "oulu__kajaani_0",
+      "name": "",
+      "type": "dot",
+      "x": 64.26,
+      "y": 55.1,
+      "edges": [
+        {
+          "target": "oulu",
+          "type": "land"
+        },
+        {
+          "target": "oulu__kajaani_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "oulu__kajaani_1",
+      "name": "",
+      "type": "dot",
+      "x": 69.56,
+      "y": 57.28,
+      "edges": [
+        {
+          "target": "oulu__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "kajaani",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "suomussalmi__kajaani_0",
+      "name": "",
+      "type": "dot",
+      "x": 80.42,
+      "y": 55.77,
+      "edges": [
+        {
+          "target": "suomussalmi",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi__kajaani_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "suomussalmi__kajaani_1",
+      "name": "",
+      "type": "dot",
+      "x": 77.64,
+      "y": 57.62,
+      "edges": [
+        {
+          "target": "suomussalmi__kajaani_0",
+          "type": "land"
+        },
+        {
+          "target": "kajaani",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pori__kauhajoki_0",
+      "name": "",
+      "type": "dot",
+      "x": 33.98,
+      "y": 78.4,
+      "edges": [
+        {
+          "target": "pori",
+          "type": "land"
+        },
+        {
+          "target": "pori__kauhajoki_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pori__kauhajoki_1",
+      "name": "",
+      "type": "dot",
+      "x": 34.88,
+      "y": 76.02,
+      "edges": [
+        {
+          "target": "pori__kauhajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "kauhajoki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kauhajoki__seinajoki_0",
+      "name": "",
+      "type": "dot",
+      "x": 38.1,
+      "y": 72.26,
+      "edges": [
+        {
+          "target": "kauhajoki",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kauhajoki__vaasa_0",
+      "name": "",
+      "type": "dot",
+      "x": 33.8,
+      "y": 71.05,
+      "edges": [
+        {
+          "target": "kauhajoki",
+          "type": "land"
+        },
+        {
+          "target": "vaasa",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemijarvi__kuusamo_0",
+      "name": "",
+      "type": "dot",
+      "x": 76.89,
+      "y": 40.34,
+      "edges": [
+        {
+          "target": "kemijarvi",
+          "type": "land"
+        },
+        {
+          "target": "kemijarvi__kuusamo_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemijarvi__kuusamo_1",
+      "name": "",
+      "type": "dot",
+      "x": 81.03,
+      "y": 42.55,
+      "edges": [
+        {
+          "target": "kemijarvi__kuusamo_0",
+          "type": "land"
+        },
+        {
+          "target": "kuusamo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemijarvi__rovaniemi_0",
+      "name": "",
+      "type": "dot",
+      "x": 68.77,
+      "y": 38.75,
+      "edges": [
+        {
+          "target": "kemijarvi",
+          "type": "land"
+        },
+        {
+          "target": "kemijarvi__rovaniemi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemijarvi__rovaniemi_1",
+      "name": "",
+      "type": "dot",
+      "x": 64.77,
+      "y": 39.37,
+      "edges": [
+        {
+          "target": "kemijarvi__rovaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "sodankyla__kemijarvi_0",
+      "name": "",
+      "type": "dot",
+      "x": 68.81,
+      "y": 33.8,
+      "edges": [
+        {
+          "target": "sodankyla",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__kemijarvi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "sodankyla__kemijarvi_1",
+      "name": "",
+      "type": "dot",
+      "x": 70.79,
+      "y": 35.96,
+      "edges": [
+        {
+          "target": "sodankyla__kemijarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "kemijarvi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemi__oulu_0",
+      "name": "",
+      "type": "dot",
+      "x": 54.68,
+      "y": 48.76,
+      "edges": [
+        {
+          "target": "kemi",
+          "type": "land"
+        },
+        {
+          "target": "kemi__oulu_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kemi__oulu_1",
+      "name": "",
+      "type": "dot",
+      "x": 56.81,
+      "y": 50.83,
+      "edges": [
+        {
+          "target": "kemi__oulu_0",
+          "type": "land"
+        },
+        {
+          "target": "oulu",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__kemi_0",
+      "name": "",
+      "type": "dot",
+      "x": 58.03,
+      "y": 42.23,
+      "edges": [
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__kemi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__kemi_1",
+      "name": "",
+      "type": "dot",
+      "x": 55.29,
+      "y": 44.45,
+      "edges": [
+        {
+          "target": "rovaniemi__kemi_0",
+          "type": "land"
+        },
+        {
+          "target": "kemi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kilpisjarvi__muonio_0",
+      "name": "",
+      "type": "dot",
+      "x": 31.06,
+      "y": 18.64,
+      "edges": [
+        {
+          "target": "kilpisjarvi",
+          "type": "land"
+        },
+        {
+          "target": "kilpisjarvi__muonio_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kilpisjarvi__muonio_1",
+      "name": "",
+      "type": "dot",
+      "x": 36.16,
+      "y": 21.29,
+      "edges": [
+        {
+          "target": "kilpisjarvi__muonio_0",
+          "type": "land"
+        },
+        {
+          "target": "kilpisjarvi__muonio_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kilpisjarvi__muonio_2",
+      "name": "",
+      "type": "dot",
+      "x": 41.25,
+      "y": 23.93,
+      "edges": [
+        {
+          "target": "kilpisjarvi__muonio_1",
+          "type": "land"
+        },
+        {
+          "target": "muonio",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "utsjoki__kilpisjarvi_0",
+      "name": "",
+      "type": "dot",
+      "x": 58.95,
+      "y": 9.45,
+      "edges": [
+        {
+          "target": "utsjoki",
+          "type": "land"
+        },
+        {
+          "target": "utsjoki__kilpisjarvi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "utsjoki__kilpisjarvi_1",
+      "name": "",
+      "type": "dot",
+      "x": 47.96,
+      "y": 11.63,
+      "edges": [
+        {
+          "target": "utsjoki__kilpisjarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "utsjoki__kilpisjarvi_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "utsjoki__kilpisjarvi_2",
+      "name": "",
+      "type": "dot",
+      "x": 36.96,
+      "y": 13.81,
+      "edges": [
+        {
+          "target": "utsjoki__kilpisjarvi_1",
+          "type": "land"
+        },
+        {
+          "target": "kilpisjarvi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "muonio__kittila_0",
+      "name": "",
+      "type": "dot",
+      "x": 50.64,
+      "y": 28.04,
+      "edges": [
+        {
+          "target": "muonio",
+          "type": "land"
+        },
+        {
+          "target": "kittila",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kittila__rovaniemi_0",
+      "name": "",
+      "type": "dot",
+      "x": 56.88,
+      "y": 33,
+      "edges": [
+        {
+          "target": "kittila",
+          "type": "land"
+        },
+        {
+          "target": "kittila__rovaniemi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kittila__rovaniemi_1",
+      "name": "",
+      "type": "dot",
+      "x": 58.83,
+      "y": 36.5,
+      "edges": [
+        {
+          "target": "kittila__rovaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kittila__sodankyla_0",
+      "name": "",
+      "type": "dot",
+      "x": 58.9,
+      "y": 30.21,
+      "edges": [
+        {
+          "target": "kittila",
+          "type": "land"
+        },
+        {
+          "target": "kittila__sodankyla_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kittila__sodankyla_1",
+      "name": "",
+      "type": "dot",
+      "x": 62.87,
+      "y": 30.93,
+      "edges": [
+        {
+          "target": "kittila__sodankyla_0",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kokkola__raahe_0",
+      "name": "",
+      "type": "dot",
+      "x": 45.63,
+      "y": 60.26,
+      "edges": [
+        {
+          "target": "kokkola",
+          "type": "land"
+        },
+        {
+          "target": "kokkola__raahe_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kokkola__raahe_1",
+      "name": "",
+      "type": "dot",
+      "x": 48.8,
+      "y": 57.96,
+      "edges": [
+        {
+          "target": "kokkola__raahe_0",
+          "type": "land"
+        },
+        {
+          "target": "raahe",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "seinajoki__kokkola_0",
+      "name": "",
+      "type": "dot",
+      "x": 41.1,
+      "y": 68.1,
+      "edges": [
+        {
+          "target": "seinajoki",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__kokkola_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "seinajoki__kokkola_1",
+      "name": "",
+      "type": "dot",
+      "x": 41.78,
+      "y": 65.32,
+      "edges": [
+        {
+          "target": "seinajoki__kokkola_0",
+          "type": "land"
+        },
+        {
+          "target": "kokkola",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kokkola__ylivieska_0",
+      "name": "",
+      "type": "dot",
+      "x": 47.47,
+      "y": 61.58,
+      "edges": [
+        {
+          "target": "kokkola",
+          "type": "land"
+        },
+        {
+          "target": "ylivieska",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kouvola__kotka_0",
+      "name": "",
+      "type": "dot",
+      "x": 68.47,
+      "y": 86.8,
+      "edges": [
+        {
+          "target": "kouvola",
+          "type": "land"
+        },
+        {
+          "target": "kotka",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__kotka_0",
+      "name": "",
+      "type": "dot",
+      "x": 87.27,
+      "y": 91.15,
+      "edges": [
+        {
+          "target": "pietari",
+          "type": "land"
+        },
+        {
+          "target": "pietari__kotka_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__kotka_1",
+      "name": "",
+      "type": "dot",
+      "x": 81.29,
+      "y": 90.18,
+      "edges": [
+        {
+          "target": "pietari__kotka_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__kotka_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__kotka_2",
+      "name": "",
+      "type": "dot",
+      "x": 75.3,
+      "y": 89.22,
+      "edges": [
+        {
+          "target": "pietari__kotka_1",
+          "type": "land"
+        },
+        {
+          "target": "kotka",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kotka__porvoo_0",
+      "name": "",
+      "type": "dot",
+      "x": 64.8,
+      "y": 88.54,
+      "edges": [
+        {
+          "target": "kotka",
+          "type": "land"
+        },
+        {
+          "target": "porvoo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lahti__kouvola_0",
+      "name": "",
+      "type": "dot",
+      "x": 63.96,
+      "y": 84.94,
+      "edges": [
+        {
+          "target": "lahti",
+          "type": "land"
+        },
+        {
+          "target": "kouvola",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lappeenranta__kouvola_0",
+      "name": "",
+      "type": "dot",
+      "x": 72.87,
+      "y": 84.65,
+      "edges": [
+        {
+          "target": "lappeenranta",
+          "type": "land"
+        },
+        {
+          "target": "kouvola",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__kouvola_0",
+      "name": "",
+      "type": "dot",
+      "x": 70.29,
+      "y": 81.29,
+      "edges": [
+        {
+          "target": "mikkeli",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__kouvola_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__kouvola_1",
+      "name": "",
+      "type": "dot",
+      "x": 68.96,
+      "y": 83.32,
+      "edges": [
+        {
+          "target": "mikkeli__kouvola_0",
+          "type": "land"
+        },
+        {
+          "target": "kouvola",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuhmo__nurmes_0",
+      "name": "",
+      "type": "dot",
+      "x": 86.15,
+      "y": 62.58,
+      "edges": [
+        {
+          "target": "kuhmo",
+          "type": "land"
+        },
+        {
+          "target": "nurmes",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "suomussalmi__kuhmo_0",
+      "name": "",
+      "type": "dot",
+      "x": 84.62,
+      "y": 56.01,
+      "edges": [
+        {
+          "target": "suomussalmi",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi__kuhmo_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "suomussalmi__kuhmo_1",
+      "name": "",
+      "type": "dot",
+      "x": 86.06,
+      "y": 58.11,
+      "edges": [
+        {
+          "target": "suomussalmi__kuhmo_0",
+          "type": "land"
+        },
+        {
+          "target": "kuhmo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuopio__varkaus_0",
+      "name": "",
+      "type": "dot",
+      "x": 75.19,
+      "y": 72.3,
+      "edges": [
+        {
+          "target": "kuopio",
+          "type": "land"
+        },
+        {
+          "target": "varkaus",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pudasjarvi__kuusamo_0",
+      "name": "",
+      "type": "dot",
+      "x": 74.83,
+      "y": 48.22,
+      "edges": [
+        {
+          "target": "pudasjarvi",
+          "type": "land"
+        },
+        {
+          "target": "pudasjarvi__kuusamo_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pudasjarvi__kuusamo_1",
+      "name": "",
+      "type": "dot",
+      "x": 79.99,
+      "y": 46.49,
+      "edges": [
+        {
+          "target": "pudasjarvi__kuusamo_0",
+          "type": "land"
+        },
+        {
+          "target": "kuusamo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuusamo__suomussalmi_0",
+      "name": "",
+      "type": "dot",
+      "x": 84.5,
+      "y": 47.82,
+      "edges": [
+        {
+          "target": "kuusamo",
+          "type": "land"
+        },
+        {
+          "target": "kuusamo__suomussalmi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "kuusamo__suomussalmi_1",
+      "name": "",
+      "type": "dot",
+      "x": 83.85,
+      "y": 50.87,
+      "edges": [
+        {
+          "target": "kuusamo__suomussalmi_0",
+          "type": "land"
+        },
+        {
+          "target": "suomussalmi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__lahti_0",
+      "name": "",
+      "type": "dot",
+      "x": 67.85,
+      "y": 81.03,
+      "edges": [
+        {
+          "target": "mikkeli",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli__lahti_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__lahti_1",
+      "name": "",
+      "type": "dot",
+      "x": 64.07,
+      "y": 82.78,
+      "edges": [
+        {
+          "target": "mikkeli__lahti_0",
+          "type": "land"
+        },
+        {
+          "target": "lahti",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lahti__porvoo_0",
+      "name": "",
+      "type": "dot",
+      "x": 60.29,
+      "y": 86.68,
+      "edges": [
+        {
+          "target": "lahti",
+          "type": "land"
+        },
+        {
+          "target": "porvoo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__lappeenranta_0",
+      "name": "",
+      "type": "dot",
+      "x": 74.87,
+      "y": 81.61,
+      "edges": [
+        {
+          "target": "mikkeli",
+          "type": "land"
+        },
+        {
+          "target": "lappeenranta",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__lappeenranta_0",
+      "name": "",
+      "type": "dot",
+      "x": 89.47,
+      "y": 90.07,
+      "edges": [
+        {
+          "target": "pietari",
+          "type": "land"
+        },
+        {
+          "target": "pietari__lappeenranta_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__lappeenranta_1",
+      "name": "",
+      "type": "dot",
+      "x": 85.69,
+      "y": 88.03,
+      "edges": [
+        {
+          "target": "pietari__lappeenranta_0",
+          "type": "land"
+        },
+        {
+          "target": "pietari__lappeenranta_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "pietari__lappeenranta_2",
+      "name": "",
+      "type": "dot",
+      "x": 81.9,
+      "y": 85.99,
+      "edges": [
+        {
+          "target": "pietari__lappeenranta_1",
+          "type": "land"
+        },
+        {
+          "target": "lappeenranta",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "otaniemi__lohja_0",
+      "name": "",
+      "type": "dot",
+      "x": 51.76,
+      "y": 90.05,
+      "edges": [
+        {
+          "target": "otaniemi",
+          "type": "land"
+        },
+        {
+          "target": "lohja",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "lohja__salo_0",
+      "name": "",
+      "type": "dot",
+      "x": 45.77,
+      "y": 89.32,
+      "edges": [
+        {
+          "target": "lohja",
+          "type": "land"
+        },
+        {
+          "target": "salo",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tukholma__maarianhamina_0",
+      "name": "",
+      "type": "dot",
+      "x": 11.2,
+      "y": 94.52,
+      "edges": [
+        {
+          "target": "tukholma",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__maarianhamina_1",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "tukholma__maarianhamina_1",
+      "name": "Teekkariristeily",
+      "type": "cruise",
+      "x": 15.59,
+      "y": 92.71,
+      "edges": [
+        {
+          "target": "tukholma__maarianhamina_0",
+          "type": "water"
+        },
+        {
+          "target": "maarianhamina",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "maarianhamina__turku_0",
+      "name": "",
+      "type": "dot",
+      "x": 25.45,
+      "y": 90.06,
+      "edges": [
+        {
+          "target": "maarianhamina",
+          "type": "water"
+        },
+        {
+          "target": "maarianhamina__turku_1",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "maarianhamina__turku_1",
+      "name": "",
+      "type": "dot",
+      "x": 30.93,
+      "y": 89.23,
+      "edges": [
+        {
+          "target": "maarianhamina__turku_0",
+          "type": "water"
+        },
+        {
+          "target": "turku",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "mikkeli__savonlinna_0",
+      "name": "",
+      "type": "dot",
+      "x": 77.31,
+      "y": 78.6,
+      "edges": [
+        {
+          "target": "mikkeli",
+          "type": "land"
+        },
+        {
+          "target": "savonlinna",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "varkaus__mikkeli_0",
+      "name": "",
+      "type": "dot",
+      "x": 73.75,
+      "y": 76.88,
+      "edges": [
+        {
+          "target": "varkaus",
+          "type": "land"
+        },
+        {
+          "target": "mikkeli",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "oulu__pudasjarvi_0",
+      "name": "",
+      "type": "dot",
+      "x": 64.31,
+      "y": 51.43,
+      "edges": [
+        {
+          "target": "oulu",
+          "type": "land"
+        },
+        {
+          "target": "pudasjarvi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "raahe__oulu_0",
+      "name": "",
+      "type": "dot",
+      "x": 55.46,
+      "y": 54.29,
+      "edges": [
+        {
+          "target": "raahe",
+          "type": "land"
+        },
+        {
+          "target": "oulu",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "seinajoki__pietarsaari_0",
+      "name": "",
+      "type": "dot",
+      "x": 40.09,
+      "y": 68.53,
+      "edges": [
+        {
+          "target": "seinajoki",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki__pietarsaari_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "seinajoki__pietarsaari_1",
+      "name": "",
+      "type": "dot",
+      "x": 39.76,
+      "y": 66.18,
+      "edges": [
+        {
+          "target": "seinajoki__pietarsaari_0",
+          "type": "land"
+        },
+        {
+          "target": "pietarsaari",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "vaasa__pietarsaari_0",
+      "name": "",
+      "type": "dot",
+      "x": 35.63,
+      "y": 66.15,
+      "edges": [
+        {
+          "target": "vaasa",
+          "type": "land"
+        },
+        {
+          "target": "pietarsaari",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rauma__pori_0",
+      "name": "",
+      "type": "dot",
+      "x": 32.07,
+      "y": 82.1,
+      "edges": [
+        {
+          "target": "rauma",
+          "type": "land"
+        },
+        {
+          "target": "pori",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__pori_0",
+      "name": "",
+      "type": "dot",
+      "x": 42.3,
+      "y": 80.72,
+      "edges": [
+        {
+          "target": "tampere",
+          "type": "land"
+        },
+        {
+          "target": "tampere__pori_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__pori_1",
+      "name": "",
+      "type": "dot",
+      "x": 37.69,
+      "y": 80.74,
+      "edges": [
+        {
+          "target": "tampere__pori_0",
+          "type": "land"
+        },
+        {
+          "target": "pori",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__pudasjarvi_0",
+      "name": "",
+      "type": "dot",
+      "x": 63,
+      "y": 42.49,
+      "edges": [
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__pudasjarvi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__pudasjarvi_1",
+      "name": "",
+      "type": "dot",
+      "x": 65.22,
+      "y": 44.97,
+      "edges": [
+        {
+          "target": "rovaniemi__pudasjarvi_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__pudasjarvi_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__pudasjarvi_2",
+      "name": "",
+      "type": "dot",
+      "x": 67.44,
+      "y": 47.46,
+      "edges": [
+        {
+          "target": "rovaniemi__pudasjarvi_1",
+          "type": "land"
+        },
+        {
+          "target": "pudasjarvi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "ylivieska__raahe_0",
+      "name": "",
+      "type": "dot",
+      "x": 52.22,
+      "y": 58.14,
+      "edges": [
+        {
+          "target": "ylivieska",
+          "type": "land"
+        },
+        {
+          "target": "raahe",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__rauma_0",
+      "name": "",
+      "type": "dot",
+      "x": 41.62,
+      "y": 81.6,
+      "edges": [
+        {
+          "target": "tampere",
+          "type": "land"
+        },
+        {
+          "target": "tampere__rauma_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__rauma_1",
+      "name": "",
+      "type": "dot",
+      "x": 36.33,
+      "y": 82.52,
+      "edges": [
+        {
+          "target": "tampere__rauma_0",
+          "type": "land"
+        },
+        {
+          "target": "rauma",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rauma__turku_0",
+      "name": "",
+      "type": "dot",
+      "x": 32.83,
+      "y": 85.08,
+      "edges": [
+        {
+          "target": "rauma",
+          "type": "land"
+        },
+        {
+          "target": "rauma__turku_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rauma__turku_1",
+      "name": "",
+      "type": "dot",
+      "x": 34.62,
+      "y": 86.74,
+      "edges": [
+        {
+          "target": "rauma__turku_0",
+          "type": "land"
+        },
+        {
+          "target": "turku",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rauma__uusikaupunki_0",
+      "name": "",
+      "type": "dot",
+      "x": 30.7,
+      "y": 84.64,
+      "edges": [
+        {
+          "target": "rauma",
+          "type": "land"
+        },
+        {
+          "target": "uusikaupunki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "sodankyla__rovaniemi_0",
+      "name": "",
+      "type": "dot",
+      "x": 64.82,
+      "y": 34.43,
+      "edges": [
+        {
+          "target": "sodankyla",
+          "type": "land"
+        },
+        {
+          "target": "sodankyla__rovaniemi_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "sodankyla__rovaniemi_1",
+      "name": "",
+      "type": "dot",
+      "x": 62.8,
+      "y": 37.21,
+      "edges": [
+        {
+          "target": "sodankyla__rovaniemi_0",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__tornio_0",
+      "name": "",
+      "type": "dot",
+      "x": 57.07,
+      "y": 41.91,
+      "edges": [
+        {
+          "target": "rovaniemi",
+          "type": "land"
+        },
+        {
+          "target": "rovaniemi__tornio_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "rovaniemi__tornio_1",
+      "name": "",
+      "type": "dot",
+      "x": 53.36,
+      "y": 43.81,
+      "edges": [
+        {
+          "target": "rovaniemi__tornio_0",
+          "type": "land"
+        },
+        {
+          "target": "tornio",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "salo__turku_0",
+      "name": "",
+      "type": "dot",
+      "x": 39.43,
+      "y": 88.6,
+      "edges": [
+        {
+          "target": "salo",
+          "type": "land"
+        },
+        {
+          "target": "turku",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "varkaus__savonlinna_0",
+      "name": "",
+      "type": "dot",
+      "x": 79.42,
+      "y": 76.21,
+      "edges": [
+        {
+          "target": "varkaus",
+          "type": "land"
+        },
+        {
+          "target": "savonlinna",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__seinajoki_0",
+      "name": "",
+      "type": "dot",
+      "x": 45.28,
+      "y": 78.24,
+      "edges": [
+        {
+          "target": "tampere",
+          "type": "land"
+        },
+        {
+          "target": "tampere__seinajoki_1",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__seinajoki_1",
+      "name": "",
+      "type": "dot",
+      "x": 43.66,
+      "y": 75.78,
+      "edges": [
+        {
+          "target": "tampere__seinajoki_0",
+          "type": "land"
+        },
+        {
+          "target": "tampere__seinajoki_2",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tampere__seinajoki_2",
+      "name": "",
+      "type": "dot",
+      "x": 42.04,
+      "y": 73.33,
+      "edges": [
+        {
+          "target": "tampere__seinajoki_1",
+          "type": "land"
+        },
+        {
+          "target": "seinajoki",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "seinajoki__vaasa_0",
+      "name": "",
+      "type": "dot",
+      "x": 36.12,
+      "y": 69.66,
+      "edges": [
+        {
+          "target": "seinajoki",
+          "type": "land"
+        },
+        {
+          "target": "vaasa",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "tukholma__tallinna_0",
+      "name": "",
+      "type": "dot",
+      "x": 18.58,
+      "y": 96.14,
+      "edges": [
+        {
+          "target": "tukholma",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__tallinna_1",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "tukholma__tallinna_1",
+      "name": "",
+      "type": "dot",
+      "x": 30.35,
+      "y": 95.95,
+      "edges": [
+        {
+          "target": "tukholma__tallinna_0",
+          "type": "water"
+        },
+        {
+          "target": "tukholma__tallinna_2",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "tukholma__tallinna_2",
+      "name": "",
+      "type": "dot",
+      "x": 42.11,
+      "y": 95.75,
+      "edges": [
+        {
+          "target": "tukholma__tallinna_1",
+          "type": "water"
+        },
+        {
+          "target": "tallinna",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "uusikaupunki__turku_0",
+      "name": "",
+      "type": "dot",
+      "x": 33.37,
+      "y": 87.12,
+      "edges": [
+        {
+          "target": "uusikaupunki",
+          "type": "land"
+        },
+        {
+          "target": "turku",
+          "type": "land"
+        }
+      ]
+    },
+    {
+      "id": "uumaja__vaasa_0",
+      "name": "",
+      "type": "dot",
+      "x": 25.43,
+      "y": 64.57,
+      "edges": [
+        {
+          "target": "uumaja",
+          "type": "water"
+        },
+        {
+          "target": "uumaja__vaasa_1",
+          "type": "water"
+        }
+      ]
+    },
+    {
+      "id": "uumaja__vaasa_1",
+      "name": "",
+      "type": "dot",
+      "x": 28.63,
+      "y": 66.51,
+      "edges": [
+        {
+          "target": "uumaja__vaasa_0",
+          "type": "water"
+        },
+        {
+          "target": "vaasa",
+          "type": "water"
+        }
+      ]
+    }
+  ]
+}

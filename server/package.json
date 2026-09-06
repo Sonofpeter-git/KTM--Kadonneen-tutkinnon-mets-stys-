@@ -1,0 +1,24 @@
+{
+  "name": "ktm-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kadonneen Tutkinnon Metsastys - digital edition game server",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "sim": "node scripts/simulate.mjs",
+    "smoke": "node scripts/smoke-client.mjs",
+    "board": "node ../tools/generate-board.mjs"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "ioredis-mock": "^8.9.0",
+    "socket.io-client": "^4.7.5"
+  }
+}

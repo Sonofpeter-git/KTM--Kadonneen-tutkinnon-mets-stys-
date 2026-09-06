@@ -1,0 +1,629 @@
+/*
+ * Layout and components.
+ *
+ * The shell is a grid whose UI never moves; only the board pans and zooms
+ * underneath it. On a phone the sidebar becomes a drawer, because the map and
+ * the action panel are the only two things that matter while you are playing.
+ */
+
+/* ------------------------------------------------------------------ shell */
+
+.shell {
+  display: grid;
+  grid-template-areas:
+    'topbar topbar'
+    'stage  sidebar'
+    'dock   sidebar';
+  grid-template-columns: 1fr minmax(0, 22rem);
+  grid-template-rows: auto 1fr auto;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.shell--entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap);
+  padding: 1.25rem;
+  overflow: auto;
+}
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-sunk);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar__code {
+  font-size: 1.1rem;
+  color: var(--yellow);
+  letter-spacing: 0.08em;
+}
+
+.topbar__turn {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+  flex: 1;
+}
+.topbar__turn strong {
+  color: var(--team, var(--text));
+  font-family: var(--font-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar__turn em { color: var(--text-dim); font-size: 0.8rem; font-style: normal; }
+
+.topbar__buttons { display: flex; gap: 0.4rem; }
+
+.iconbtn {
+  padding: 0.4rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 0.85rem;
+}
+.iconbtn:hover { background: var(--surface-raised); }
+
+.stage { grid-area: stage; position: relative; min-height: 0; background: #050505; }
+.stage__loading { position: absolute; inset: 0.75rem; }
+
+.stage__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.82);
+  padding: 1rem;
+  overflow: auto;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap);
+  background: var(--surface-sunk);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.dock {
+  grid-area: dock;
+  padding: var(--gap);
+  background: var(--surface-sunk);
+  border-top: 1px solid var(--line);
+}
+
+/* ------------------------------------------------------------------ board */
+
+.board { position: absolute; inset: 0; touch-action: none; }
+
+/* Belt and braces: the sizes are also set inline in Board.jsx, because the
+   library injects its own `fit-content` rules after this stylesheet. */
+.board__viewport { width: 100% !important; height: 100% !important; }
+.board__content { width: 100% !important; height: 100% !important; }
+
+/* The plate is the map itself: full height, width from the board's aspect
+   ratio, centred in whatever space is left. `flex: 0 0 auto` stops the flex
+   container the library gives us from stretching it out of shape. */
+.board__plate {
+  position: relative;
+  height: 100%;
+  width: auto;
+  flex: 0 0 auto;
+  margin: auto;
+}
+
+/* The map. The gradient shows through if the image is missing or still loading,
+   so the board never flashes white. */
+.board__basemap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 10%, #10171d 0%, #080b0e 60%, #050708 100%);
+  border: 1px solid #16202a;
+  border-radius: var(--radius);
+}
+
+.board__image {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;      /* the plate already carries the image's aspect ratio */
+  display: block;
+  /* The painted map is already flat and calm, so it needs far less knocking
+     back than a photograph did - just enough that the yellow routes and the
+     pawns stay the loudest things on a dark screen. */
+  filter: saturate(0.85) brightness(0.82);
+}
+
+.board__routes { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.route { stroke-width: 0.35; stroke-linecap: round; fill: none; }
+.route--land { stroke: #4a5560; }
+.route--water { stroke: var(--blue); stroke-dasharray: 1 1.2; opacity: 0.55; }
+.route--flight { stroke: var(--yellow); stroke-dasharray: 0.2 1.6; opacity: 0.5; }
+
+.route--preview {
+  stroke: var(--yellow);
+  stroke-width: 0.7;
+  opacity: 1;
+  filter: drop-shadow(0 0 0.4px var(--yellow));
+}
+
+/* --------------------------------------------------------------- squares */
+
+.square {
+  position: absolute;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: none;
+  /* Counter the board zoom so hit areas and labels stay a usable size. */
+  scale: var(--inv);
+}
+
+.square__mark {
+  display: block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #6c7a86;
+  border: 1px solid #0a0d10;
+}
+
+.square--dot .square__mark { width: 0.4rem; height: 0.4rem; opacity: 0.75; }
+
+.square--city .square__mark {
+  width: 1rem;
+  height: 1rem;
+  background: #cdd6de;
+  border-width: 2px;
+}
+
+.square--border .square__mark { background: var(--red); width: 0.8rem; height: 0.8rem; }
+.square--cruise .square__mark { background: var(--yellow); width: 0.8rem; height: 0.8rem; }
+
+.square--spent .square__mark { background: #5b6975; }
+
+.square__label {
+  position: absolute;
+  top: 100%;
+  margin-top: 0.15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.5rem;
+  line-height: 1.1;
+  color: var(--text-dim);
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+
+.square__disc { color: var(--green); font-style: normal; font-size: 0.46rem; }
+
+/* A face-down disc sits on the city circle, as on the physical mat. */
+.square__facedown {
+  position: absolute;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 1px;
+  background: repeating-linear-gradient(45deg, #8a6d1f 0 2px, #6d5518 2px 4px);
+  border: 1px solid #2a2109;
+  pointer-events: none;
+}
+
+/* Reachable squares: yellow, per the design system. */
+.square--reachable { cursor: pointer; }
+.square--reachable .square__mark {
+  background: var(--yellow);
+  box-shadow: 0 0 0 0.18rem rgba(254, 205, 50, 0.28);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.square--reachable:hover .square__mark,
+.square--reachable:focus-visible .square__mark {
+  box-shadow: 0 0 0 0.32rem rgba(254, 205, 50, 0.45);
+}
+
+@keyframes pulse {
+  50% { box-shadow: 0 0 0 0.3rem rgba(254, 205, 50, 0.12); }
+}
+
+.square--standing .square__mark { outline: 2px dashed var(--text); outline-offset: 2px; }
+
+/* ----------------------------------------------------------------- pawns */
+
+.pawn {
+  position: absolute;
+  translate: calc(-50% + var(--dx, 0%)) calc(-50% + var(--dy, 0%));
+  scale: var(--inv);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pawn__body {
+  display: grid;
+  place-items: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: var(--pawn);
+  color: #0b0b0b;
+  font-family: var(--font-accent);
+  font-weight: 800;
+  font-size: 0.5rem;
+  border: 2px solid #0b0b0b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ---------------------------------------------------------------- panels */
+
+.panel { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.panel__phase {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0;
+}
+.panel__you { font-family: var(--font-heading); font-weight: 700; color: var(--yellow); }
+.panel__phaseName { color: var(--text-dim); font-size: 0.85rem; }
+
+.panel__idle { margin: 0; color: var(--text-dim); text-align: center; }
+.panel__hint { margin: 0; color: var(--text-dim); font-size: 0.9rem; }
+.panel__hint--warn { color: var(--red); }
+.panel__hint em { color: var(--text-faint); font-style: normal; }
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-weight: 600;
+  transition: background 0.12s ease;
+}
+.btn:hover:not(:disabled) { background: var(--surface-raised); }
+.btn:disabled { opacity: 0.4; }
+.btn em { font-style: normal; font-weight: 400; color: var(--text-faint); font-size: 0.82rem; }
+
+.btn--primary {
+  background: var(--yellow);
+  color: var(--on-accent);
+  border-color: var(--yellow);
+}
+.btn--primary:hover:not(:disabled) { background: #ffd94f; }
+.btn--primary em { color: rgba(16, 16, 16, 0.65); }
+
+.btn--roll { min-height: 3.6rem; font-size: 1.05rem; }
+
+.btn--warn { border-color: var(--red); color: var(--red); }
+.btn--warn:hover:not(:disabled) { background: rgba(255, 86, 80, 0.12); }
+
+.btn--quiet { background: transparent; color: var(--text-dim); }
+
+.btn--drink {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+  justify-content: flex-start;
+}
+.btn--drink em { display: block; color: rgba(255, 255, 255, 0.75); font-size: 0.78rem; }
+.btn--drink strong { display: block; }
+.btn__lead {
+  font-size: 1.6rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ scoreboard */
+
+.scoreboard__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.scoreboard__head h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.scoreboard__discs { color: var(--text-dim); font-size: 0.85rem; }
+.scoreboard__discs em { font-style: normal; color: var(--text-faint); font-weight: 400; }
+
+/* The night's tally. Big enough to read from the sofa. */
+.scoreboard__beers {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0 0 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--surface-sunk);
+  border-left: 3px solid var(--red);
+  border-radius: var(--radius);
+}
+.scoreboard__beerCount { font-size: 1.6rem; color: var(--red); line-height: 1; }
+.scoreboard__beers em { font-style: normal; font-size: 0.75rem; color: var(--text-dim); }
+
+.scoreboard__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+
+.team {
+  display: grid;
+  grid-template-columns: 0.5rem 1fr 4rem auto;
+  grid-template-areas: 'dot id op drinks' 'dot meter meter drinks';
+  align-items: center;
+  gap: 0.1rem 0.5rem;
+  padding: 0.45rem 0.5rem;
+  background: var(--surface-sunk);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+.team--active { border-color: var(--yellow); background: #16150c; }
+.team--you .team__id strong { text-decoration: underline dotted; }
+.team--gone { opacity: 0.45; }
+
+.team__dot {
+  grid-area: dot;
+  width: 0.5rem; height: 2rem;
+  background: var(--team);
+  border-radius: 1px;
+}
+.team__id { grid-area: id; display: flex; flex-direction: column; min-width: 0; }
+.team__id strong { font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.team__id em { font-style: normal; font-size: 0.72rem; color: var(--text-faint); }
+
+.team__meter {
+  grid-area: meter;
+  height: 3px;
+  background: #23282c;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.team__fill { display: block; height: 100%; background: var(--team); }
+
+.team__op { grid-area: op; text-align: right; font-size: 1.1rem; }
+.team__op em { display: block; font-style: normal; font-size: 0.62rem; color: var(--text-faint); font-weight: 400; }
+
+/* Two tallies side by side: what a team has drunk, and what it still owes. */
+.team__tallies {
+  grid-area: drinks;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.team__drunk,
+.team__drinks {
+  min-width: 1.6rem;
+  text-align: center;
+  padding: 0.15rem 0.3rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+}
+
+.team__drunk { background: var(--surface-raised); color: var(--text-dim); }
+.team__drinks { background: var(--red); color: #fff; }
+
+/* ------------------------------------------------------------------- log */
+
+.log h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); }
+.log__empty { color: var(--text-faint); font-size: 0.85rem; }
+.log__list { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.15rem; }
+.log__line { font-size: 0.8rem; color: var(--text-dim); }
+.log__line--good { color: var(--green); }
+.log__line--bad { color: var(--red); }
+
+/* ----------------------------------------------------------------- lobby */
+
+.join, .lobby {
+  width: min(30rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.join__title { font-size: 1.5rem; text-align: center; color: var(--yellow); }
+
+.field { display: flex; flex-direction: column; gap: 0.25rem; }
+.field span { font-size: 0.8rem; color: var(--text-dim); }
+.field__input {
+  padding: 0.75rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+}
+.field__input--code { text-transform: uppercase; letter-spacing: 0.2em; font-size: 1.2rem; }
+
+.lobby__head { display: flex; justify-content: space-between; align-items: baseline; }
+.lobby__code { color: var(--yellow); font-size: 1.3rem; letter-spacing: 0.15em; }
+.lobby__note, .lobby__hint { margin: 0; color: var(--text-faint); font-size: 0.82rem; }
+
+.guilds { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+
+.guild {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.5rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  text-align: left;
+}
+.guild:hover:not(:disabled) { background: var(--surface); }
+.guild--mine { border-color: var(--team); background: var(--surface); }
+.guild--taken { opacity: 0.4; }
+.guild__dot { width: 0.5rem; height: 1.8rem; background: var(--team); border-radius: 1px; }
+.guild__name { display: flex; flex-direction: column; min-width: 0; }
+.guild__name strong { font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.guild__name em { font-style: normal; font-size: 0.72rem; color: var(--text-faint); }
+.guild__who { color: var(--team); font-weight: 700; }
+
+.lobby__players { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.lobby__players li { font-size: 0.82rem; color: var(--text-dim); }
+.lobby__players em { font-style: normal; color: var(--text-faint); }
+.lobby__players .is-gone { opacity: 0.4; }
+
+.lobby__actions { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.entryLoading { width: min(30rem, 100%); display: grid; gap: var(--gap); }
+
+/* ----------------------------------------------------------------- admin */
+
+.admin {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(22rem, 100%);
+  padding: var(--gap);
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.admin__head { display: flex; justify-content: space-between; align-items: center; }
+.admin__head h2 { font-size: 1rem; }
+.admin__close { font-size: 1.2rem; color: var(--text-dim); padding: 0.2rem 0.5rem; }
+.admin__note { margin: 0; font-size: 0.8rem; color: var(--text-faint); }
+
+.admin__teams { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.admin__teams li {
+  padding: 0.5rem;
+  background: var(--surface-sunk);
+  border-left: 3px solid var(--team, var(--line));
+  border-radius: var(--radius);
+}
+.admin__team { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; }
+.admin__row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+.admin__row em { font-style: normal; color: var(--text-faint); flex: 1; }
+.admin__row button {
+  min-width: 2rem;
+  padding: 0.2rem 0.4rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+}
+.admin__row strong { min-width: 2.5rem; text-align: center; }
+
+.admin__actions { display: grid; gap: 0.4rem; }
+.admin__order { margin: 0; padding-left: 1.2rem; color: var(--text-faint); font-size: 0.78rem; }
+
+/* -------------------------------------------------------------- finished */
+
+.finished {
+  width: min(32rem, 100%);
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.finished__kicker { margin: 0; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.75rem; }
+.finished__winner { font-size: 1.8rem; color: var(--team, var(--yellow)); margin: 0.2rem 0; }
+.finished__op { font-size: 1.2rem; color: var(--green); margin: 0 0 1.2rem; }
+.finished__heading { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
+
+.finished__list { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.3rem; text-align: left; }
+.finished__list li {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--surface);
+  border-left: 3px solid var(--team, var(--line));
+  border-radius: var(--radius);
+}
+.finished__place { color: var(--text-faint); }
+.finished__score { font-size: 1.1rem; text-align: right; }
+.finished__score em {
+  display: block;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: var(--red);
+}
+
+.finished__beers {
+  margin: 0 0 1.2rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.finished__beers .numeric { color: var(--red); font-size: 1.3rem; }
+
+.transcript { list-style: none; margin: 0.2rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.2rem; }
+.chip {
+  font-size: 0.62rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  color: var(--text-dim);
+}
+.chip--good { background: rgba(126, 189, 75, 0.18); color: var(--green); }
+
+/* ------------------------------------------------------- banner + toast */
+
+.banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  margin: 0;
+  padding: 0.35rem;
+  text-align: center;
+  font-size: 0.8rem;
+  z-index: 30;
+}
+.banner--warn { background: var(--red); color: #fff; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  translate: -50% 0;
+  z-index: 40;
+  max-width: min(26rem, calc(100% - 2rem));
+  padding: 0.6rem 1rem;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 860px) {
+  .shell {
+    grid-template-areas: 'topbar' 'stage' 'dock';
+    grid-template-columns: 1fr;
+  }
+
+  /* The sidebar becomes a drawer: on a phone the map and your own buttons are
+     the only things worth permanent space. */
+  .sidebar {
+    position: fixed;
+    inset: 3rem 0 auto 0;
+    max-height: 60dvh;
+    border-left: 0;
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-110%);
+    transition: transform 0.2s ease;
+    z-index: 15;
+  }
+  .shell--aside .sidebar { transform: none; }
+
+  .square__label { font-size: 0.62rem; }
+}

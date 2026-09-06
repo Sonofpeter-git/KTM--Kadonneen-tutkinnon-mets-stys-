@@ -1,0 +1,78 @@
+{
+  "note": "Turn order runs youngest guild first, by founding year (rulebook step 0). All eight years confirmed by the project owner 2026-08-31. Guilds sharing a year (Digit and DaTe, both 1999) are separated by a server coin flip. The Game Leader can still override turn order from the admin panel.",
+  "howToEdit": "foundedYear must be an integer or null; null sorts last. homeCity must match a city node id in nodes.json. Two guilds may share a home city - the rulebook lists Turku and Abo separately but they are the same place, so Digit and DaTe both start on `turku`.",
+  "guilds": [
+    {
+      "id": "algo",
+      "name": "Algo ry",
+      "city": "Jyväskylä",
+      "homeCity": "jyvaskyla",
+      "foundedYear": 2020,
+      "verified": true,
+      "color": "#7ebd4b"
+    },
+    {
+      "id": "digit",
+      "name": "Digit ry",
+      "city": "Turku",
+      "homeCity": "turku",
+      "foundedYear": 1999,
+      "verified": true,
+      "color": "#fecd32"
+    },
+    {
+      "id": "date",
+      "name": "Datateknologerna vid Åbo Akademi (DaTe)",
+      "city": "Åbo",
+      "homeCity": "turku",
+      "foundedYear": 1999,
+      "verified": true,
+      "color": "#3ec7c2"
+    },
+    {
+      "id": "tite",
+      "name": "Tampereen TietoTeekkarikilta ry (TiTe)",
+      "city": "Tampere",
+      "homeCity": "tampere",
+      "foundedYear": 1990,
+      "verified": true,
+      "color": "#e8607f"
+    },
+    {
+      "id": "tutti",
+      "name": "Tutti ry",
+      "city": "Vaasa",
+      "homeCity": "vaasa",
+      "foundedYear": 1989,
+      "verified": true,
+      "color": "#f08a3c"
+    },
+    {
+      "id": "otit",
+      "name": "Oulun Tietoteekkarit ry (OTiT)",
+      "city": "Oulu",
+      "homeCity": "oulu",
+      "foundedYear": 1988,
+      "verified": true,
+      "color": "#4aa3df"
+    },
+    {
+      "id": "tik",
+      "name": "Tietokilta ry (TiK)",
+      "city": "Otaniemi",
+      "homeCity": "otaniemi",
+      "foundedYear": 1986,
+      "verified": true,
+      "color": "#ff5650"
+    },
+    {
+      "id": "cluster",
+      "name": "Cluster ry",
+      "city": "Lappeenranta",
+      "homeCity": "lappeenranta",
+      "foundedYear": 1984,
+      "verified": true,
+      "color": "#b06cd6"
+    }
+  ]
+}
