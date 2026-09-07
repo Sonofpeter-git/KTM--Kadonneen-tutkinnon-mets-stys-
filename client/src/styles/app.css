@@ -85,6 +85,37 @@
   overflow: auto;
 }
 
+.flash-overlay {
+  gap: 0.5rem;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+.flash-overlay__shout {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: 700;
+  color: var(--red);
+}
+.flash-overlay__number {
+  margin: 0;
+  font-size: clamp(4rem, 20vw, 12rem);
+  line-height: 1;
+  color: var(--team, #fff);
+}
+.flash-overlay__number em {
+  display: block;
+  font-style: normal;
+  font-size: clamp(1rem, 4vw, 2rem);
+  color: var(--text-dim);
+}
+.flash-overlay__teamname {
+  margin: 0;
+  font-size: clamp(1.2rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--team, #fff);
+}
+
 .sidebar {
   grid-area: sidebar;
   display: flex;
@@ -106,22 +137,30 @@
 
 /* ------------------------------------------------------------------ board */
 
-.board { position: absolute; inset: 0; touch-action: none; }
+/* --inv must be declared here, not in :root: var(--zoom) is substituted at
+   the declaring element, so computing it where --zoom actually changes
+   (Board.jsx sets --zoom inline on this element) is what makes it live.
+   Declaring it at :root would freeze it at the root's static default. */
+.board {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  --inv: max(calc(1 / var(--zoom)), 0.35);
+}
 
 /* Belt and braces: the sizes are also set inline in Board.jsx, because the
    library injects its own `fit-content` rules after this stylesheet. */
 .board__viewport { width: 100% !important; height: 100% !important; }
 .board__content { width: 100% !important; height: 100% !important; }
 
-/* The plate is the map itself: full height, width from the board's aspect
-   ratio, centred in whatever space is left. `flex: 0 0 auto` stops the flex
-   container the library gives us from stretching it out of shape. */
+/* The plate is the map itself, stretched to fill the viewport exactly - no
+   letterboxing. The image (object-fit: fill) and every node's percentage
+   position share this same box, so nothing misaligns; the map just isn't
+   geographically undistorted at every window size. */
 .board__plate {
   position: relative;
+  width: 100%;
   height: 100%;
-  width: auto;
-  flex: 0 0 auto;
-  margin: auto;
 }
 
 /* The map. The gradient shows through if the image is missing or still loading,
@@ -150,7 +189,7 @@
 .board__routes { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .route { stroke-width: 0.35; stroke-linecap: round; fill: none; }
-.route--land { stroke: #4a5560; }
+.route--land { stroke: #4a5560; stroke-width: 0.2; opacity: 0.55; }
 .route--water { stroke: var(--blue); stroke-dasharray: 1 1.2; opacity: 0.55; }
 .route--flight { stroke: var(--yellow); stroke-dasharray: 0.2 1.6; opacity: 0.5; }
 
@@ -606,9 +645,28 @@
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 860px) {
+  /* The topbar still floats over the map - it's short and never hides a
+     node. The dock claims its own row instead: its height varies with the
+     action panel's content, and floating it over the map used to bury
+     southern nodes (Tallinna) underneath it, unreachable. */
   .shell {
-    grid-template-areas: 'topbar' 'stage' 'dock';
+    grid-template-areas: 'stage' 'dock';
     grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 15;
+    background: rgba(26, 26, 26, 0.82);
+    backdrop-filter: blur(6px);
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
+  .dock {
+    background: rgba(26, 26, 26, 0.88);
+    padding-bottom: max(var(--gap), env(safe-area-inset-bottom));
   }
 
   /* The sidebar becomes a drawer: on a phone the map and your own buttons are
@@ -619,9 +677,12 @@
     max-height: 60dvh;
     border-left: 0;
     border-bottom: 1px solid var(--line);
-    transform: translateY(-110%);
+    /* vh, not %: a % transform is relative to the drawer's own (content-
+       dependent) height, which is too short to clear its `top: 3rem` offset
+       when there are few teams/events - it used to peek into view. */
+    transform: translateY(-100vh);
     transition: transform 0.2s ease;
-    z-index: 15;
+    z-index: 16;
   }
   .shell--aside .sidebar { transform: none; }
 

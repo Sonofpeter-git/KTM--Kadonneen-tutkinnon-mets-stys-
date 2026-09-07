@@ -34,7 +34,6 @@
 
   /* board */
   --zoom: 1;
-  --inv: calc(1 / var(--zoom));   /* counter-scale, to keep labels readable */
 }
 
 * { box-sizing: border-box; }

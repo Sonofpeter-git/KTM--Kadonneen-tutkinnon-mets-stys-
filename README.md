@@ -43,6 +43,16 @@ cd server && npm install && npm start        # :3001
 cd client && npm install && npm run dev      # :5173  <- open this one
 ```
 
+Prefer not to install Node on the host at all? The same three processes, containerized, with
+the source bind-mounted so edits still hot-reload:
+
+```bash
+docker compose -f docker-compose.dev.yml up   # :5173  <- open this one
+```
+
+This is separate from `docker-compose.yml` on purpose - that one builds the static production
+bundle for the party, this one trades that for live reload.
+
 ### Checks
 
 ```bash

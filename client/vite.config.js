@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react';
 
 // The client talks to the game server over websockets only; proxying in dev
 // keeps the browser on one origin so no CORS setup is needed to get started.
+//
+// The target is overridable because it isn't always localhost: inside
+// docker-compose.dev.yml the server is a sibling container, reachable only
+// by its service name.
+const proxyTarget = process.env.VITE_PROXY_TARGET || 'http://127.0.0.1:3001';
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -13,8 +19,8 @@ export default defineConfig({
     host: true,
     port: 5173,
     proxy: {
-      '/socket.io': { target: 'http://127.0.0.1:3001', ws: true },
-      '/health': { target: 'http://127.0.0.1:3001' },
+      '/socket.io': { target: proxyTarget, ws: true },
+      '/health': { target: proxyTarget },
     },
   },
 });

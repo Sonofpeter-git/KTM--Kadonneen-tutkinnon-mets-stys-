@@ -112,7 +112,7 @@ export default function Board({
           wrapperStyle={{ width: '100%', height: '100%' }}
           contentStyle={{ width: '100%', height: '100%' }}
         >
-          <div className="board__plate" style={{ aspectRatio: String(aspect) }}>
+          <div className="board__plate">
             {/* Layer 1: the map itself. If the file is missing the layer just
                 stays dark and the graph is still perfectly playable. */}
             <div className="board__basemap" aria-hidden="true">

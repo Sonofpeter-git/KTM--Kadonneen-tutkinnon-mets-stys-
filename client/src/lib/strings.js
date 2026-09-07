@@ -54,6 +54,7 @@ export const T = {
   hostOnly: 'Pelinjohtaja ei osallistu kiltana - sinä tuomaroit.',
   hosting: 'Johdat peliä. Seuraa tilannetta ja korjaa tarvittaessa.',
   changeRoom: 'Vaihda huone',
+  leaveRoom: 'Poistu huoneesta',
   restoring: 'Palataan peliin…',
   spectator: 'Katsoja',
   spectating: 'Katsot peliä',

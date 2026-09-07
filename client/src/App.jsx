@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRoom } from './net/useRoom.js';
 import { T, PHASE_LABEL } from './lib/strings.js';
 import Board from './components/Board.jsx';
@@ -8,6 +8,9 @@ import Scoreboard from './components/Scoreboard.jsx';
 import EventLog from './components/EventLog.jsx';
 import AdminSidebar from './components/AdminSidebar.jsx';
 import Finished from './components/Finished.jsx';
+import TokenFlash from './components/TokenFlash.jsx';
+
+const FLASH_DURATION_MS = 2000;
 
 /**
  * Role decides the shape of the screen, not what the server will accept:
@@ -24,6 +27,51 @@ export default function App() {
 
   const [adminOpen, setAdminOpen] = useState(false);
   const [asideOpen, setAsideOpen] = useState(false);
+
+  const [flash, setFlash] = useState(null);
+  const flashSeenEventRef = useRef(null);
+  const flashTimerRef = useRef(null);
+
+  // Watch the feed for the two card moments worth a full flash. `feed` is a
+  // capped sliding window (LOG_LIMIT in useRoom.js), so its length plateaus
+  // once a room is busy enough - tracking "how many events we've seen" by
+  // count stops working the moment the window starts sliding. Tracking the
+  // last-seen event object instead (its reference survives the slice/spread
+  // in onEvents) and scanning backward until we hit it keeps working however
+  // long the room runs, and still treats an empty feed (leave/rejoin) as
+  // nothing-seen-yet.
+  useEffect(() => {
+    if (feed.length === 0) {
+      flashSeenEventRef.current = null;
+      return;
+    }
+
+    const lastSeen = flashSeenEventRef.current;
+    const newEvents = [];
+    for (let i = feed.length - 1; i >= 0 && feed[i] !== lastSeen; i--) {
+      newEvents.push(feed[i]);
+    }
+    flashSeenEventRef.current = feed[feed.length - 1];
+
+    let next = null;
+    for (const event of newEvents) {
+      if (event.type === 'TOKEN_MUUT_JUO' || event.type === 'TOKEN_OP') {
+        next = event;
+        break;
+      }
+    }
+    if (!next) return;
+
+    clearTimeout(flashTimerRef.current);
+    setFlash(
+      next.type === 'TOKEN_MUUT_JUO'
+        ? { kind: 'MUUT_JUO' }
+        : { kind: 'OP', op: next.op, guildId: state?.players?.find((p) => p.id === next.playerId)?.guildId },
+    );
+    flashTimerRef.current = setTimeout(() => setFlash(null), FLASH_DURATION_MS);
+  }, [feed, state]);
+
+  useEffect(() => () => clearTimeout(flashTimerRef.current), []);
 
   const guildsById = useMemo(
     () => Object.fromEntries(guilds.map((g) => [g.id, g])),
@@ -103,6 +151,9 @@ export default function App() {
           <button className="iconbtn" onClick={() => setAsideOpen((v) => !v)}>
             {T.standings}
           </button>
+          <button className="iconbtn" onClick={leave}>
+            {T.leaveRoom}
+          </button>
         </span>
       </header>
 
@@ -127,6 +178,13 @@ export default function App() {
             <Finished state={state} guildsById={guildsById} />
           </div>
         )}
+
+        <TokenFlash
+          flash={flash}
+          guildsById={guildsById}
+          viewerGuildId={me?.guildId}
+          onDismiss={() => { clearTimeout(flashTimerRef.current); setFlash(null); }}
+        />
       </div>
 
       <aside className="sidebar">
