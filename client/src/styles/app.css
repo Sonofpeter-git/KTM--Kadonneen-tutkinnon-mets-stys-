@@ -151,16 +151,28 @@
 /* Belt and braces: the sizes are also set inline in Board.jsx, because the
    library injects its own `fit-content` rules after this stylesheet. */
 .board__viewport { width: 100% !important; height: 100% !important; }
-.board__content { width: 100% !important; height: 100% !important; }
+.board__content {
+  width: 100% !important;
+  height: 100% !important;
+  /* Lets .board__plate size itself against the viewport's own box (cqw/cqh)
+     regardless of the pan/zoom transform the library applies to this same
+     element - transforms are paint-time, not layout, so this stays stable. */
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* The plate is the map itself, stretched to fill the viewport exactly - no
-   letterboxing. The image (object-fit: fill) and every node's percentage
-   position share this same box, so nothing misaligns; the map just isn't
-   geographically undistorted at every window size. */
+/* The plate keeps the map's real aspect ratio (--aspect, set inline from
+   board.aspectRatio in Board.jsx) and letterboxes within the viewport instead
+   of stretching to fill it. min() picks whichever of "full width" / "full
+   height" keeps both axes inside the viewport; the unused margin is just the
+   dark .stage background showing through. Node positions are percentages of
+   this same box, so they stay correctly placed on the map either way. */
 .board__plate {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: min(100cqw, 100cqh * var(--aspect, 0.5));
+  height: min(100cqh, 100cqw / var(--aspect, 0.5));
 }
 
 /* The map. The gradient shows through if the image is missing or still loading,

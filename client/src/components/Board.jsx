@@ -86,7 +86,7 @@ export default function Board({
   const vx = (x) => (x / 100) * vw;
 
   return (
-    <div className="board" style={{ '--zoom': zoom }}>
+    <div className="board" style={{ '--zoom': zoom, '--aspect': aspect }}>
       <TransformWrapper
         minScale={0.6}
         maxScale={8}
