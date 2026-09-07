@@ -1,4 +1,6 @@
-import { T, beers, PHASE_LABEL, TOKEN_LABEL } from '../lib/strings.js';
+import {
+  T, beers, PHASE_LABEL, TOKEN_LABEL, openNowCostLabel, waitToOpenCostLabel, openDiscHereCostLabel,
+} from '../lib/strings.js';
 
 /**
  * What this player can do, right now.
@@ -87,6 +89,7 @@ export default function ActionPanel({
           players={state.players}
           guildsById={guildsById}
           boardById={boardById}
+          costMode={state.costMode}
           send={send}
         />
       )}
@@ -112,7 +115,7 @@ function RollingActions({ state, me, boardById, send }) {
       {canOpen && (
         <button className="btn" onClick={() => send('req_open_token', {})}>
           {T.openDiscHere}
-          <em>{T.openDiscHereCost}</em>
+          <em>{openDiscHereCostLabel(state.costMode)}</em>
         </button>
       )}
 
@@ -130,7 +133,7 @@ function RollingActions({ state, me, boardById, send }) {
   );
 }
 
-function Resolution({ pending, players, guildsById, boardById, send }) {
+function Resolution({ pending, players, guildsById, boardById, costMode, send }) {
   if (!pending) return null;
 
   if (pending.kind === 'TOKEN') {
@@ -144,14 +147,14 @@ function Resolution({ pending, players, guildsById, boardById, send }) {
           onClick={() => send('req_resolution_action', { choice: { action: 'OPEN_NOW' } })}
         >
           {T.openNow}
-          <em>{T.openNowCost}</em>
+          <em>{openNowCostLabel(costMode)}</em>
         </button>
         <button
           className="btn"
           onClick={() => send('req_resolution_action', { choice: { action: 'WAIT' } })}
         >
           {T.waitToOpen}
-          <em>{T.waitToOpenCost}</em>
+          <em>{waitToOpenCostLabel(costMode)}</em>
         </button>
       </>
     );

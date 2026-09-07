@@ -380,6 +380,40 @@ test('disc: waiting leaves it face down, to be turned next turn for one beer', (
   assert.equal(activePlayerId(state), 'p2', 'opening costs the move');
 });
 
+test('disc: half cost mode halves both the arrival and the wait price', () => {
+  let state = arriveAt(startedGame({ costMode: 'half' }), 'tampere', 'op60');
+  state = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } }).state;
+  assert.equal(player(state, 'p1').drinksOwed, T.OPEN_COST_MODES.half.now + 2, 'one to open, two for a 60op');
+
+  state = arriveAt(startedGame({ costMode: 'half' }), 'tampere', 'op40');
+  state = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'WAIT' } }).state;
+  state.turnState.activeIndex = 0;
+  state.turnState.phase = PHASES.ROLLING;
+  state = act(state, { type: 'OPEN_TOKEN', playerId: 'p1' }).state;
+
+  const p = player(state, 'p1');
+  assert.equal(p.op, 40);
+  assert.equal(p.drinksOwed, T.OPEN_COST_MODES.half.later + 1, 'free to open, one for a 40op');
+  assert.equal(activePlayerId(state), 'p2', 'opening still costs the move even when free');
+});
+
+test('leader override: the cost mode can only be set from the lobby', () => {
+  let state = lobby(['p1', 'p2'], ['digit', 'tik']);
+  throwsCode(() => act(state, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_OPEN_COST_MODE', args: { mode: 'nope' },
+  }), 'BAD_COST_MODE');
+
+  state = act(state, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_OPEN_COST_MODE', args: { mode: 'half' },
+  }).state;
+  assert.equal(state.costMode, 'half');
+
+  state = startedGame({ costMode: 'half' });
+  throwsCode(() => act(state, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_OPEN_COST_MODE', args: { mode: 'full' },
+  }), 'WRONG_STATUS');
+});
+
 test('disc: the Teekkarilakki upgrades the die to a d6 for good', () => {
   let state = arriveAt(startedGame(), 'tampere', 'teekkarilakki');
   state = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } }).state;

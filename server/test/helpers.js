@@ -45,8 +45,16 @@ export function startedGame({
   ids = ['p1', 'p2'],
   guildIds = ['digit', 'tik'],
   seed = 'TEST',
+  costMode,
 } = {}) {
   let state = lobby(ids, guildIds, seed);
+  if (costMode) {
+    state = applyAction(
+      state,
+      { type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_OPEN_COST_MODE', args: { mode: costMode } },
+      deps,
+    ).state;
+  }
   state = applyAction(state, { type: 'START_GAME', playerId: HOST }, deps).state;
 
   if (activePlayerId(state) !== ids[0]) {

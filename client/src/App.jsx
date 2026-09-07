@@ -7,6 +7,7 @@ import ActionPanel, { guildName } from './components/ActionPanel.jsx';
 import Scoreboard from './components/Scoreboard.jsx';
 import EventLog from './components/EventLog.jsx';
 import AdminSidebar from './components/AdminSidebar.jsx';
+import RulesPanel from './components/RulesPanel.jsx';
 import Finished from './components/Finished.jsx';
 import TokenFlash from './components/TokenFlash.jsx';
 
@@ -27,6 +28,7 @@ export default function App() {
 
   const [adminOpen, setAdminOpen] = useState(false);
   const [asideOpen, setAsideOpen] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   const [flash, setFlash] = useState(null);
   const flashSeenEventRef = useRef(null);
@@ -148,6 +150,9 @@ export default function App() {
               {T.admin}
             </button>
           )}
+          <button className="iconbtn" onClick={() => setRulesOpen((v) => !v)}>
+            {T.rules}
+          </button>
           <button className="iconbtn" onClick={() => setAsideOpen((v) => !v)}>
             {T.standings}
           </button>
@@ -224,6 +229,8 @@ export default function App() {
           onClose={() => setAdminOpen(false)}
         />
       )}
+
+      {rulesOpen && <RulesPanel onClose={() => setRulesOpen(false)} />}
 
       {error && <Toast message={error} onDismiss={dismissError} />}
     </main>

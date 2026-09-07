@@ -35,6 +35,24 @@ export const PHASE_LABEL = {
   FINISHED: 'Peli päättyi',
 };
 
+/** Rules drawer content, condensed from README.md and server/src/game/tokens.js. */
+export const RULES = [
+  { title: 'Liikkuminen', body: 'd4, tai d6 kun killalla on Teekkarilakki.' },
+  { title: 'Matkaolut', body: 'Heitto 4 tai enemmän maksaa yhden matkaoluen, vaikka lopulta liikkuisi vähemmän.' },
+  { title: 'Lyhyempi siirto', body: 'Minkä tahansa reitin varrella olevan ruudun voi valita pysähdyspaikaksi.' },
+  { title: 'Ei peruuttamista', body: 'Reitti ei saa käyttää ruutua, jonka jo ylitti tällä vuorolla.' },
+  { title: 'Lautta', body: '1 olut per merenylitys, ei per vesiruutu.' },
+  { title: 'Lento', body: 'Pietari ↔ Ivalo, 3 olutta, vie koko vuoron.' },
+  { title: 'Teekkariristeily', body: 'Risteilyruutuun pysähtyminen maksaa 3 shottia.' },
+  { title: 'Rajavartija', body: 'Haaparannassa on pysähdyttävä. Seuraavalla vuorolla heitetään d6 - kuutosella pääsee läpi ja saa vielä liikkua, muuten yksi olut ja vuoro päättyy.' },
+  { title: 'Toiseen joukkueeseen törmääminen', body: 'Voi määrätä heille yhden oluen tai armahtaa.' },
+  { title: 'Kiekon kääntäminen', body: '2 olutta heti, tai 1 olut ja koko seuraava vuoro odotusta.' },
+  { title: 'Juomat ja vuoro', body: 'Juomavelkainen joukkue ohitetaan, ei odoteta - vuoro siirtyy seuraavalle. Jos kaikki ovat velkaa, vuoro on auki ja ensimmäisenä juonut saa sen.' },
+  { title: 'Tutkintouudistus', body: 'Suurin kurssi suoritetaan uudelleen - opintopisteet säilyvät, mutta sen oluet juodaan uudelleen.' },
+  { title: 'Voitto', body: 'Ensimmäinen kotiin päässyt joukkue, jolla on vähintään 300 op. Muut sijat ratkeavat sen hetken opintopisteillä.' },
+  { title: 'Jos kaikki kiekot käännetty ennen kuin kukaan valmistuu', body: 'Ensimmäinen kotiin päässyt saa +80 op ja voittaa.' },
+];
+
 export const T = {
   appName: 'Kadonneen tutkinnon metsästys',
   appShort: 'KTM',
@@ -50,6 +68,9 @@ export const T = {
   startGame: 'Aloita peli',
   needTwoGuilds: 'Vähintään kaksi kiltaa on valittava',
   randomize: 'Arvo vapaat killat',
+  openCostMode: 'Kiekkojen hinta',
+  openCostModeFull: 'Täysi (2 / 1)',
+  openCostModeHalf: 'Puolikas (1 / 0)',
   leader: 'Pelinjohtaja',
   hostOnly: 'Pelinjohtaja ei osallistu kiltana - sinä tuomaroit.',
   hosting: 'Johdat peliä. Seuraa tilannetta ja korjaa tarvittaessa.',
@@ -78,7 +99,6 @@ export const T = {
   fly: 'Lennä',
   flyCost: '3 olutta',
   openDiscHere: 'Käännä kiekko',
-  openDiscHereCost: '1 olut ja koko vuoro',
   faceTheGuard: 'Heitä rajavartijasta',
   guardNote: 'Kuutosella pääset läpi ja saat vielä liikkua.',
   guardPassed: 'Rajavartija ei ole paikalla!',
@@ -87,9 +107,7 @@ export const T = {
   // resolution
   discFound: 'Kiekko tässä kaupungissa',
   openNow: 'Käännä heti',
-  openNowCost: '2 olutta',
   waitToOpen: 'Odota ensi vuoroon',
-  waitToOpenCost: '1 olut, mutta menetät liikkumisvuoron',
   landedOn: 'Törmäsit toiseen joukkueeseen',
   assignDrink: 'Määrää olut',
   skip: 'Ohita',
@@ -112,6 +130,9 @@ export const T = {
   finalStandings: 'Loppusijoitukset',
   place: 'sija',
 
+  // rules
+  rules: 'Säännöt',
+
   // admin
   admin: 'Pelinjohto',
   adminNote: 'Korjaa tilanne käsin jos peli menee solmuun.',
@@ -133,6 +154,24 @@ export const T = {
 
 /** "3 olutta" / "1 olut" */
 export const beers = (n) => `${n} ${n === 1 ? 'olut' : 'olutta'}`;
+
+/** Mirrors server/src/game/tokens.js's OPEN_COST_MODES. */
+const OPEN_COSTS = {
+  full: { now: 2, later: 1 },
+  half: { now: 1, later: 0 },
+};
+
+export const openNowCostLabel = (costMode) => beers((OPEN_COSTS[costMode] ?? OPEN_COSTS.full).now);
+
+export const waitToOpenCostLabel = (costMode) => {
+  const n = (OPEN_COSTS[costMode] ?? OPEN_COSTS.full).later;
+  return n === 0 ? 'Ilmaiseksi, mutta menetät liikkumisvuoron' : `${beers(n)}, mutta menetät liikkumisvuoron`;
+};
+
+export const openDiscHereCostLabel = (costMode) => {
+  const n = (OPEN_COSTS[costMode] ?? OPEN_COSTS.full).later;
+  return n === 0 ? 'Koko vuoro, ei olutta' : `${beers(n)} ja koko vuoro`;
+};
 
 /** Human-readable one-liners for the event feed. */
 export function describeEvent(event, nameOf) {
@@ -180,6 +219,8 @@ export function describeEvent(event, nameOf) {
     case 'OVERRIDE_SKIP': return `Pelinjohto ohitti vuoron: ${nameOf(event.skippedId)}`;
     case 'OVERRIDE_TURN_ORDER': return 'Pelinjohto muutti heittojärjestystä';
     case 'OVERRIDE_GUILDS_RANDOMIZED': return 'Killat arvottiin';
+    case 'OVERRIDE_COST_MODE':
+      return `Pelinjohto asetti kiekkojen hinnan: ${event.mode === 'half' ? 'puolikas' : 'täysi'}`;
     default: return null;   // anything unlabelled stays out of the feed
   }
 }

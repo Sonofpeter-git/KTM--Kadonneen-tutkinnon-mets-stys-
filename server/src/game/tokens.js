@@ -29,6 +29,16 @@ export const OPEN_NOW_COST = 2;
 export const OPEN_LATER_COST = 1;
 
 /**
+ * Leader-toggled house rule, set once from the lobby (see engine.js's
+ * SET_OPEN_COST_MODE override). 'half' is for lighter nights: opening on
+ * arrival costs one instead of two, and waiting for next turn is free.
+ */
+export const OPEN_COST_MODES = {
+  full: { now: OPEN_NOW_COST, later: OPEN_LATER_COST },
+  half: { now: 1, later: 0 },
+};
+
+/**
  * 'per-run'  - one beer per sea crossing, however many squares it spans.
  *              Matches "tulee heidan juoda yksi olut aloittaakseen matkan".
  * 'per-edge' - one beer per water square entered. Harsher; here if you want it.

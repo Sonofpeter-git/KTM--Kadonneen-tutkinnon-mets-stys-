@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { T } from '../lib/strings.js';
 import { rememberedName, rememberedRoom } from '../net/socket.js';
+import RulesPanel from './RulesPanel.jsx';
 
 /** Room code and name, before anything else exists. */
 export function JoinForm({ onJoin, busy }) {
@@ -54,6 +55,8 @@ export function JoinForm({ onJoin, busy }) {
 
 /** Guild selection, and the leader's start button. */
 export default function Lobby({ state, guilds, me, isLeader, send, onLeave }) {
+  const [rulesOpen, setRulesOpen] = useState(false);
+
   const takenBy = {};
   for (const p of state.players) if (p.guildId) takenBy[p.guildId] = p;
 
@@ -119,9 +122,25 @@ export default function Lobby({ state, guilds, me, isLeader, send, onLeave }) {
       {isLeader ? (
         <div className="lobby__actions">
           <button className="btn btn--quiet" onClick={onLeave}>{T.changeRoom}</button>
+          <button className="btn btn--quiet" onClick={() => setRulesOpen(true)}>{T.rules}</button>
           <button className="btn btn--quiet" onClick={() => send('req_leader_override', { op: 'RANDOMIZE_GUILDS' })}>
             {T.randomize}
           </button>
+          <div className="lobby__costmode">
+            <em>{T.openCostMode}</em>
+            <button
+              className={state.costMode === 'half' ? 'btn btn--quiet' : 'btn btn--primary'}
+              onClick={() => send('req_leader_override', { op: 'SET_OPEN_COST_MODE', args: { mode: 'full' } })}
+            >
+              {T.openCostModeFull}
+            </button>
+            <button
+              className={state.costMode === 'half' ? 'btn btn--primary' : 'btn btn--quiet'}
+              onClick={() => send('req_leader_override', { op: 'SET_OPEN_COST_MODE', args: { mode: 'half' } })}
+            >
+              {T.openCostModeHalf}
+            </button>
+          </div>
           <button
             className="btn btn--primary"
             disabled={!ready}
@@ -134,9 +153,12 @@ export default function Lobby({ state, guilds, me, isLeader, send, onLeave }) {
       ) : (
         <div className="lobby__actions">
           <p className="lobby__hint">{T.waitingForLeader}</p>
+          <button className="btn btn--quiet" onClick={() => setRulesOpen(true)}>{T.rules}</button>
           <button className="btn btn--quiet" onClick={onLeave}>{T.changeRoom}</button>
         </div>
       )}
+
+      {rulesOpen && <RulesPanel onClose={() => setRulesOpen(false)} />}
     </div>
   );
 }

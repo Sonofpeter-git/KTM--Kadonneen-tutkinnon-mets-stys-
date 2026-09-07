@@ -531,6 +531,9 @@
 
 .lobby__actions { display: flex; flex-direction: column; gap: 0.4rem; }
 
+.lobby__costmode { display: flex; align-items: center; gap: 0.4rem; }
+.lobby__costmode em { font-style: normal; color: var(--text-faint); font-size: 0.82rem; margin-right: auto; }
+
 .entryLoading { width: min(30rem, 100%); display: grid; gap: var(--gap); }
 
 /* ----------------------------------------------------------------- admin */
@@ -573,6 +576,29 @@
 
 .admin__actions { display: grid; gap: 0.4rem; }
 .admin__order { margin: 0; padding-left: 1.2rem; color: var(--text-faint); font-size: 0.78rem; }
+
+/* ----------------------------------------------------------------- rules */
+
+.rules {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(22rem, 100%);
+  padding: var(--gap);
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.rules__head { display: flex; justify-content: space-between; align-items: center; }
+.rules__head h2 { font-size: 1rem; }
+.rules__close { font-size: 1.2rem; color: var(--text-dim); padding: 0.2rem 0.5rem; }
+
+.rules__list { margin: 0; display: grid; gap: 0.6rem; }
+.rules__list dt { font-weight: 600; font-size: 0.85rem; }
+.rules__list dd { margin: 0.15rem 0 0; color: var(--text-faint); font-size: 0.8rem; }
 
 /* -------------------------------------------------------------- finished */
 

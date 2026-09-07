@@ -37,12 +37,13 @@ export class GameError extends Error {
 
 /* ------------------------------------------------------------ construction */
 
-export function createRoom({ code, seed = code, createdAt = 0 }) {
+export function createRoom({ code, seed = code, createdAt = 0, costMode = 'full' }) {
   return {
     code,
     status: 'LOBBY',
     rng: seedFrom(String(seed)),
     createdAt,
+    costMode,
     players: [],
     turnOrder: [],
     turnState: null,
@@ -390,7 +391,7 @@ function openStandingToken(state, { playerId }, deps) {
     throw new GameError('NO_TOKEN', 'no face-down disc on this square');
   }
 
-  const events = revealToken(state, player, player.nodeId, T.OPEN_LATER_COST);
+  const events = revealToken(state, player, player.nodeId, openCosts(state).later);
   events.push(...endTurn(state, deps));
   return events;
 }
@@ -458,8 +459,9 @@ function resolve(state, { playerId, choice }, deps) {
 
   if (current.kind === 'TOKEN') {
     if (choice?.action === 'OPEN_NOW') {
-      // Rulebook step 5: opening on arrival costs two beers instead of one.
-      events.push(...revealToken(state, player, current.cityId, T.OPEN_NOW_COST));
+      // Rulebook step 5: opening on arrival costs two beers instead of one
+      // (halved in 'half' cost mode - see the Game Leader's lobby toggle).
+      events.push(...revealToken(state, player, current.cityId, openCosts(state).now));
     } else if (choice?.action === 'WAIT') {
       events.push({ type: 'TOKEN_DEFERRED', playerId, cityId: current.cityId });
     } else {
@@ -490,6 +492,9 @@ function resolve(state, { playerId, choice }, deps) {
   if (state.turnState.pending.length === 0) events.push(...endTurn(state, deps));
   return events;
 }
+
+// `costMode` is undefined on rooms persisted before this field existed.
+const openCosts = (state) => T.OPEN_COST_MODES[state.costMode ?? 'full'];
 
 function revealToken(state, player, cityId, openCost) {
   const cell = state.board.tokens[cityId];
@@ -615,6 +620,16 @@ function leaderOverride(state, { playerId, op, args = {} }, deps) {
       state.turnOrder = [...order];
       state.turnState.activeIndex = Math.max(0, order.indexOf(activeId));
       return [{ type: 'OVERRIDE_TURN_ORDER', turnOrder: [...order] }];
+    }
+
+    case 'SET_OPEN_COST_MODE': {
+      // Set once from the lobby: the price of a disc shouldn't shift mid-game.
+      requireStatus(state, 'LOBBY');
+      if (!T.OPEN_COST_MODES[args.mode]) {
+        throw new GameError('BAD_COST_MODE', 'mode must be "full" or "half"');
+      }
+      state.costMode = args.mode;
+      return [{ type: 'OVERRIDE_COST_MODE', mode: args.mode }];
     }
 
     case 'RANDOMIZE_GUILDS': {
