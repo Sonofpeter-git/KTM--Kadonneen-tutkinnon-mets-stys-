@@ -93,6 +93,7 @@ export const T = {
   drinksDone: 'Juotu!',
   drinksOwedOne: 'olut juomatta',
   drinksOwedMany: 'olutta juomatta',
+  holdToConfirm: 'pidä 1s',
   chooseSquare: 'Valitse ruutu johon liikut',
   canMoveLess: 'Saat liikkua vähemmän kuin noppa näyttää.',
   travelBeer: 'Matkaolut',
@@ -129,6 +130,9 @@ export const T = {
   winner: 'Valmistui',
   finalStandings: 'Loppusijoitukset',
   place: 'sija',
+
+  // topbar
+  menu: 'Valikko',
 
   // rules
   rules: 'Säännöt',

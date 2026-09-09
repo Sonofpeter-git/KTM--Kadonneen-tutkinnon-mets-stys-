@@ -29,6 +29,7 @@ export default function App() {
   const [adminOpen, setAdminOpen] = useState(false);
   const [asideOpen, setAsideOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const [flash, setFlash] = useState(null);
   const flashSeenEventRef = useRef(null);
@@ -144,16 +145,25 @@ export default function App() {
           <em>{PHASE_LABEL[state.turnState?.phase] ?? ''}</em>
         </span>
 
-        <span className="topbar__buttons">
+        <button
+          className="iconbtn topbar__burger"
+          aria-label={T.menu}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          ☰
+        </button>
+
+        <span className={`topbar__buttons ${menuOpen ? 'topbar__buttons--open' : ''}`}>
           {isLeader && (
-            <button className="iconbtn" onClick={() => setAdminOpen((v) => !v)}>
+            <button className="iconbtn" onClick={() => { setAdminOpen((v) => !v); setMenuOpen(false); }}>
               {T.admin}
             </button>
           )}
-          <button className="iconbtn" onClick={() => setRulesOpen((v) => !v)}>
+          <button className="iconbtn" onClick={() => { setRulesOpen((v) => !v); setMenuOpen(false); }}>
             {T.rules}
           </button>
-          <button className="iconbtn" onClick={() => setAsideOpen((v) => !v)}>
+          <button className="iconbtn" onClick={() => { setAsideOpen((v) => !v); setMenuOpen(false); }}>
             {T.standings}
           </button>
           <button className="iconbtn" onClick={leave}>

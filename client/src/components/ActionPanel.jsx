@@ -1,6 +1,45 @@
+import { useRef, useState } from 'react';
 import {
   T, beers, PHASE_LABEL, TOKEN_LABEL, openNowCostLabel, waitToOpenCostLabel, openDiscHereCostLabel,
 } from '../lib/strings.js';
+
+const DRINK_HOLD_MS = 1000;
+
+/**
+ * A tap clears drinks by accident too easily. Confirming the drink actually
+ * happened needs a full second of held intent, not a stray touch.
+ */
+function HoldButton({ className, holdMs, onConfirm, children }) {
+  const [holding, setHolding] = useState(false);
+  const timerRef = useRef(null);
+
+  const start = () => {
+    setHolding(true);
+    timerRef.current = setTimeout(() => {
+      setHolding(false);
+      onConfirm();
+    }, holdMs);
+  };
+  const cancel = () => {
+    clearTimeout(timerRef.current);
+    setHolding(false);
+  };
+
+  return (
+    <button
+      type="button"
+      className={`${className} ${holding ? 'btn--holding' : ''}`}
+      style={{ '--holdMs': `${holdMs}ms` }}
+      onPointerDown={start}
+      onPointerUp={cancel}
+      onPointerLeave={cancel}
+      onPointerCancel={cancel}
+    >
+      <span className="btn__fill" aria-hidden="true" />
+      {children}
+    </button>
+  );
+}
 
 /**
  * What this player can do, right now.
@@ -20,13 +59,17 @@ export default function ActionPanel({
   // Drinks can arrive from another team's "Muut juo!" while you are nowhere
   // near your own turn, so this is always available.
   const drinkButton = owed > 0 && (
-    <button className="btn btn--drink" onClick={() => send('req_drink_cleared', {})}>
+    <HoldButton
+      className="btn btn--drink"
+      holdMs={DRINK_HOLD_MS}
+      onConfirm={() => send('req_drink_cleared', {})}
+    >
       <span className="btn__lead numeric">{owed}</span>
       <span>
         <strong>{T.drinksDone}</strong>
-        <em>{owed === 1 ? T.drinksOwedOne : T.drinksOwedMany}</em>
+        <em>{owed === 1 ? T.drinksOwedOne : T.drinksOwedMany} · {T.holdToConfirm}</em>
       </span>
-    </button>
+    </HoldButton>
   );
 
   // Everyone owes drinks and the turn is up for grabs: first one done takes it.

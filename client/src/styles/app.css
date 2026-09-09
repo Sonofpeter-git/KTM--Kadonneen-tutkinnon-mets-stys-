@@ -64,6 +64,10 @@
 
 .topbar__buttons { display: flex; gap: 0.4rem; }
 
+/* Burger only exists as a mobile affordance; hidden until the 860px
+   breakpoint below turns topbar__buttons into a dropdown. */
+.topbar__burger { display: none; }
+
 .iconbtn {
   padding: 0.4rem 0.7rem;
   background: var(--surface);
@@ -400,11 +404,25 @@
 .btn--quiet { background: transparent; color: var(--text-dim); }
 
 .btn--drink {
+  position: relative;
+  overflow: hidden;
   background: var(--red);
   border-color: var(--red);
   color: #fff;
   justify-content: flex-start;
 }
+
+/* Filled by holding the button down; only animates while --holding is
+   applied, so releasing early snaps the fill back to nothing instead of
+   draining it - the button gives up exactly as fast as you let go. */
+.btn__fill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  background: rgba(255, 255, 255, 0.28);
+}
+.btn--holding .btn__fill { width: 100%; transition: width var(--holdMs, 1000ms) linear; }
+.btn--drink > :not(.btn__fill) { position: relative; z-index: 1; }
 .btn--drink em { display: block; color: rgba(255, 255, 255, 0.75); font-size: 0.78rem; }
 .btn--drink strong { display: block; }
 .btn__lead {
@@ -756,4 +774,23 @@
   .shell--aside .sidebar { transform: none; }
 
   .square__label { font-size: 0.62rem; }
+
+  /* Four buttons plus the code/turn readout don't fit a phone-width topbar,
+     so they collapse behind a burger and drop down as a panel instead. */
+  .topbar__burger { display: block; }
+
+  .topbar__buttons {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0.75rem;
+    flex-direction: column;
+    background: rgba(26, 26, 26, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.4rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  }
+  .topbar__buttons--open { display: flex; }
 }
