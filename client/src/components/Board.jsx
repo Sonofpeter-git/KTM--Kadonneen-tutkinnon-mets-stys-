@@ -96,82 +96,98 @@ export default function Board({
         wheel={{ step: 0.12 }}
         onTransformed={(_ref, s) => setZoom(s.scale)}
       >
-        {/*
-          These sizes must be inline.
+        {({ zoomIn, zoomOut }) => (
+          <>
+            {/*
+              These sizes must be inline.
 
-          react-zoom-pan-pinch injects its own stylesheet when it mounts, which
-          lands after ours in the cascade and sets both of these boxes to
-          `fit-content`. Sizing a child by `height: 100%` inside a `fit-content`
-          parent is circular, so it resolves to zero and the whole board
-          collapses onto a single point. Inline styles outrank the injected
-          rules without an !important arms race.
-        */}
-        <TransformComponent
-          wrapperClass="board__viewport"
-          contentClass="board__content"
-          wrapperStyle={{ width: '100%', height: '100%' }}
-          contentStyle={{ width: '100%', height: '100%' }}
-        >
-          <div className="board__plate">
-            {/* Layer 1: the map itself. If the file is missing the layer just
-                stays dark and the graph is still perfectly playable. */}
-            <div className="board__basemap" aria-hidden="true">
-              {board.basemap?.image && (
-                <img
-                  className="board__image"
-                  src={board.basemap.image}
-                  alt=""
-                  draggable="false"
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                />
-              )}
-            </div>
-
-            {/* Layer 2: routes. */}
-            <svg
-              className="board__routes"
-              viewBox={`0 0 ${vw} 100`}
-              preserveAspectRatio="none"
-              aria-hidden="true"
+              react-zoom-pan-pinch injects its own stylesheet when it mounts, which
+              lands after ours in the cascade and sets both of these boxes to
+              `fit-content`. Sizing a child by `height: 100%` inside a `fit-content`
+              parent is circular, so it resolves to zero and the whole board
+              collapses onto a single point. Inline styles outrank the injected
+              rules without an !important arms race.
+            */}
+            <TransformComponent
+              wrapperClass="board__viewport"
+              contentClass="board__content"
+              wrapperStyle={{ width: '100%', height: '100%' }}
+              contentStyle={{ width: '100%', height: '100%' }}
             >
-              {edges.map((e) => (
-                <line
-                  key={e.key}
-                  x1={vx(e.a.x)} y1={e.a.y}
-                  x2={vx(e.b.x)} y2={e.b.y}
-                  className={[
-                    'route',
-                    `route--${e.type}`,
-                    previewEdges.has(e.key) ? 'route--preview' : '',
-                  ].join(' ')}
-                />
-              ))}
-            </svg>
+              <div className="board__plate">
+                {/* Layer 1: the map itself. If the file is missing the layer just
+                    stays dark and the graph is still perfectly playable. */}
+                <div className="board__basemap" aria-hidden="true">
+                  {board.basemap?.image && (
+                    <img
+                      className="board__image"
+                      src={board.basemap.image}
+                      alt=""
+                      draggable="false"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  )}
+                </div>
 
-            {/* Layer 3: the squares themselves. */}
-            {board.nodes.map((node) => (
-              <Square
-                key={node.id}
-                node={node}
-                disc={tokens?.[node.id]}
-                reachable={reachable[node.id]}
-                isActive={node.id === activeNodeId}
-                interactive={interactive}
-                onPick={onPick}
-                onPreview={setHovered}
-              />
-            ))}
+                {/* Layer 2: routes. */}
+                <svg
+                  className="board__routes"
+                  viewBox={`0 0 ${vw} 100`}
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  {edges.map((e) => (
+                    <line
+                      key={e.key}
+                      x1={vx(e.a.x)} y1={e.a.y}
+                      x2={vx(e.b.x)} y2={e.b.y}
+                      className={[
+                        'route',
+                        `route--${e.type}`,
+                        previewEdges.has(e.key) ? 'route--preview' : '',
+                      ].join(' ')}
+                    />
+                  ))}
+                </svg>
 
-            {[...pawnsByNode].map(([nodeId, group]) => (
-              <Pawns
-                key={nodeId}
-                node={byId.get(nodeId)}
-                players={group}
-                guildsById={guildsById}
-              />
-            ))}
-          </div>
-        </TransformComponent>
+                {/* Layer 3: the squares themselves. */}
+                {board.nodes.map((node) => (
+                  <Square
+                    key={node.id}
+                    node={node}
+                    disc={tokens?.[node.id]}
+                    reachable={reachable[node.id]}
+                    isActive={node.id === activeNodeId}
+                    interactive={interactive}
+                    onPick={onPick}
+                    onPreview={setHovered}
+                  />
+                ))}
+
+                {[...pawnsByNode].map(([nodeId, group]) => (
+                  <Pawns
+                    key={nodeId}
+                    node={byId.get(nodeId)}
+                    players={group}
+                    guildsById={guildsById}
+                  />
+                ))}
+              </div>
+            </TransformComponent>
+
+            {/* Touchpad pinch-zoom is unreliable/slow on laptops, so offer a
+                buttoned alternative. Kept outside TransformComponent so it
+                doesn't get panned/scaled with the board itself. */}
+            <div className="board__zoomControls">
+              <button type="button" onClick={() => zoomOut(0.1, 200)} aria-label="Loitonna 10%">
+                −
+              </button>
+              <button type="button" onClick={() => zoomIn(0.1, 200)} aria-label="Lähennä 10%">
+                +
+              </button>
+            </div>
+          </>
+        )}
       </TransformWrapper>
     </div>
   );

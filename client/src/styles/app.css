@@ -198,6 +198,37 @@
   filter: saturate(0.85) brightness(0.82);
 }
 
+/* Buttoned zoom, for touchpads whose pinch-zoom drives the library's wheel
+   handler at a crawl. Small and transparent so it doesn't compete with the
+   board itself. */
+.board__zoomControls {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.board__zoomControls button {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.board__zoomControls button:hover,
+.board__zoomControls button:focus-visible {
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
 .board__routes { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .route { stroke-width: 0.35; stroke-linecap: round; fill: none; }
