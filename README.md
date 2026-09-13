@@ -96,7 +96,7 @@ tools/fetch-geodata.mjs       refreshes the coastline, lakes and borders from Na
 tools/art/geodata.json        that geometry, vendored so rendering needs no network
 tools/art/board-source.jpg    the retired terrain photograph the board used to be painted from
 server/
-  data/nodes.json             216 nodes, 54 of them city squares
+  data/nodes.json             259 nodes, 54 of them city squares
   data/guilds.json            the eight guilds and their founding years
   src/game/                   the rules, as pure functions
     engine.js                 the turn machine: applyAction(state, action) -> {state, events}
@@ -136,7 +136,7 @@ Turn order runs **youngest guild first**, by founding year (rulebook step 0):
 | 4 | Tampereen TietoTeekkarikilta ry (TiTe) | Tampere | 1990 |
 | 5 | Tutti ry | Vaasa | 1989 |
 | 6 | Oulun Tietoteekkarit ry (OTiT) | Oulu | 1988 |
-| 7 | Tietokilta ry (TiK) | Otaniemi | 1986 |
+| 7 | Tietokilta ry (TiK) | Otaniemi (starts on the Espoo square) | 1986 |
 | 8 | Cluster ry | Lappeenranta | 1984 |
 
 Digit and DaTe share 1999, so the server flips a coin between them. **Åbo and Turku are the
@@ -153,8 +153,16 @@ pretending it was founded in year zero.
 
 The board is painted in the style of the physical game — flat green land, poster-blue
 water, national borders in dashed ink — with the game graph drawn on top: 54 city squares
-(one per cardboard disc), 161 connector dots, the Pietari–Ivalo flight, six ferry
+(one per cardboard disc), 203 connector dots, the Pietari–Ivalo flight, six ferry
 crossings, the Haaparanta border, and a Teekkariristeily square on the Stockholm run.
+
+The graph itself — which cities exist, which routes join them, and how many dots each
+route carries — is **transcribed from photographs of the physical mat** in `ktm-board/`,
+not synthesised. Dot count is the game's distance metric, so it is counted off the
+artwork rather than derived from distance. Six of the connector dots are *junctions*: the
+mat forks routes at plain dots, not only at cities, so a dot can carry three or four
+edges. They are named in `SPECIAL_NODES` purely so the adjacency table has something to
+attach the branches to.
 
 ### The background is generated
 
@@ -188,9 +196,9 @@ world the picture covers, and every city is projected into that frame:
 ```js
 const BASEMAP = {
   image: '/board.jpg',
-  width: 1470, height: 2912,
+  width: 1980, height: 2916,
   projection: 'mercator',
-  bounds: { north: 70.6, south: 58.8, west: 17.104, east: 31.296 },
+  bounds: { north: 70.6, south: 58.4, west: 14.198, east: 33.803 },
 };
 ```
 
@@ -209,9 +217,12 @@ dry land — there was none there to stand on.
 So the window is now a **decision** and the coast is drawn to match it. The renderer
 projects the real geometry through the very same bounds that place the city circles, which
 means the map and the cities cannot disagree: neither is measured against the other. The
-window is chosen so every node sits at least 3% inside the edge, and so the longitude span
-is exactly what the latitude span needs for the Mercator aspect to equal the image's own
-1470×2912 — nothing is stretched.
+window is chosen so every node sits well inside the edge — Söderhamn at 17.06°E and
+Ilomantsi at 30.93°E are the horizontal extremes — and so the longitude span is exactly
+what the latitude span needs for the Mercator aspect to equal the image's own 1980×2916,
+which is in turn the physical mat's 203:299. Nothing is stretched, and the digital board
+has the proportions of the real one. The older window stopped at 17.104°E, which the
+Swedish coast alone now puts out of date: Söderhamn and Gävle both fell outside it.
 
 ### Checking it
 
@@ -244,7 +255,7 @@ the plain graph.
 
 ```jsonc
 {
-  "aspectRatio": 0.5048,                       // the image's own shape
+  "aspectRatio": 0.68,                         // the image's own shape
   "basemap": { "image": "/board.jpg", "bounds": { ... } },
   "homeCities": { "turku": ["digit", "date"], ... },
   "cruiseNode": "…",
@@ -416,15 +427,15 @@ rendered board markup contains no disc names, and the smoke test watching every 
 
 | Command | What it proves | Status |
 |---|---|---|
-| `node tools/generate-board.mjs` | the map is well-formed and connected | ✅ 216 nodes, 54 cities |
+| `node tools/generate-board.mjs` | the map is well-formed and connected | ✅ 259 nodes, 54 cities |
 | `server: npm test` | every rule, in isolation | ✅ 78 passing |
-| `server: npm run sim -- 60` | 60 complete games; no disc lost, no OP negative, no dead phase, all terminate | ✅ ~103 rolls, ~184 beers, ~22 skipped turns per game |
+| `server: npm run sim -- 60` | 60 complete games; no disc lost, no OP negative, no dead phase, all terminate | ✅ ~166 rolls, ~188 beers, ~19 skipped turns per game |
 | `server: npm run smoke` | sockets + reducer + store wired together, against real Redis | ✅ 11 checks |
 | `client: npm test` | every view renders, from real engine states | ✅ 26 passing |
 | `client: npm run build` | production bundle | ✅ 241 kB / 77 kB gzipped |
 | `client: npm run inspect` | the board actually lays out in Chrome | ✅ image loads, squares spread across the plate |
 | `client: npm run verify:map` | the painted map and the city circles agree | ✅ 15 / 15 probes, no node past 5 px of water |
-| `client: npm run art` | draws the background from the same bounds that place the cities | ✅ 1470×2912, 541 kB |
+| `client: npm run art` | draws the background from the same bounds that place the cities | ✅ 1980×2916, 717 kB |
 | `docker compose up --build` | both containers healthy; join → start → roll → move on one origin | ✅ verified, rooms survive a restart |
 
 The client tests build their fixtures with the real engine and pass them through the real
@@ -438,9 +449,11 @@ automated link between the two halves — keep it.
 - **Leadership never transfers.** If the Game Leader clears their browser storage, nobody can
   start the game or reach the overrides. A refresh is fine — that is now restored — but a
   wiped identity is not.
-- **The board is a real map of Finland, painted to match the physical game.** Cities sit on
-  their true coordinates rather than being traced off the plywood, so the layout is
-  geographically honest but not square-for-square identical to the real board.
+- **The graph is the real board's; the positions are real geography.** Cities, routes and
+  dot counts are transcribed from the photographs, so the board plays square-for-square
+  like the mat. Positions are still each city's true coordinates rather than traced pixel
+  locations, so the *layout* is geographically honest rather than reproducing the mat's
+  hand-painted wobble.
 - **Only the notable lakes are drawn.** The coastline comes from Natural Earth 1:10m, which
   carries Saimaa, Päijänne, Inari, Ladoga and their like but not the thousands of small
   ones. Finnish lakeland therefore reads cleaner than it did on the terrain photograph —
