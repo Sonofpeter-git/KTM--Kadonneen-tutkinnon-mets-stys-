@@ -67,7 +67,12 @@ cd client
 npm test                   # 26 render tests, driven by real engine states
 npm run build              # production bundle
 npm run inspect            # drive real Chrome against a running stack, measure the board
+npm run verify:sounds      # decode every cue sample in real Chrome (needs a server on :4173)
 ```
+
+`npm run verify:sounds` loads each sample named in `src/audio/cues.js` and checks the browser
+can actually decode it: a file it chokes on is silence, and silence is exactly what a working
+cue looks like from the outside. Run it after swapping the placeholder for a real recording.
 
 `npm run inspect` seeds a started game over the socket, opens the app in your installed Chrome
 (no browser download - it uses `channel: 'chrome'`), reports the box of every board layer, and
@@ -109,11 +114,15 @@ server/
   src/sockets.js              Socket.io transport - contains no rules
 client/
   public/board.jpg            generated background - see `npm run art`
+  public/sounds/              cue samples; gulp.wav is a synthesized placeholder
   scripts/render-basemap.mjs  draws it; scripts/verify-basemap.mjs checks it still fits
   src/components/Board.jsx    base plate + SVG routes + DOM squares, zoom and pan
   src/components/             ActionPanel, Scoreboard, Lobby, AdminSidebar, EventLog, Finished
   src/net/useRoom.js          the socket, and everything that arrives on it
   src/net/socket.js           connection and the persisted player id
+  src/net/useNewEvents.js     what arrived since last time, over the capped feed
+  src/audio/cues.js           event type -> sound, and whose phone plays it
+  src/audio/player.js         AudioContext, decode cache, master gain
   src/lib/strings.js          every player-facing string, in one file
   src/styles/                 design tokens, then layout
 ```
@@ -348,6 +357,26 @@ receipt, and it only ever goes up. The sidebar shows the night's grand total abo
 standings, and each team carries two badges — grey for beers seen off, red for beers still
 owed. A leader override adjusts the debt without touching the tally, because a correction is
 not a beer anyone drank. The endgame card closes with the total.
+
+**Drinking makes a noise on your own phone.** Marking beers done plays a gulp - on the
+device of the team that drank, and nowhere else. That scoping is the whole design: a cue
+played everywhere would be the same sample firing on nine phones tens of milliseconds
+apart, which is slapback, not emphasis. It also means the TV is quiet without anything
+checking for a role, because a spectator never performs an action and so never matches.
+
+Which event makes which noise lives in one table, [`src/audio/cues.js`](client/src/audio/cues.js),
+keyed by event type exactly like `describeEvent()` and the log's `tone()` are. Adding a sound
+to card-opening later is one line there and one file in `public/sounds/`; the server is not
+involved at all, because a cue is a rendering of an event it already broadcasts. Audiences are
+predicates rather than a flag, so `TOKEN_MUUT_JUO` can sound on the phones named in its
+`affected` list, and a future room-wide cue can be gated on the one device that volunteers as
+the speaker.
+
+Sound is on by default and muted from the topbar. There is no "enable audio" button because
+there does not need to be: the team a cue belongs to has just tapped their own screen, which
+is the gesture the autoplay policy wants, so the context unlocks on the first touch anywhere.
+Audio failing is never fatal - a missing file, a blocked fetch or a browser without Web Audio
+just leaves the game quiet, and the log line already said what happened.
 
 **Reconnection is free.** The player id is generated once into `localStorage`, and the room
 code is stored beside it, so both a dropped socket *and* a full page reload silently reclaim

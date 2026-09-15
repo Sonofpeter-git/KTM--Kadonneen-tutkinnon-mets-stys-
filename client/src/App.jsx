@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRoom } from './net/useRoom.js';
+import { useNewEvents } from './net/useNewEvents.js';
+import { useSoundCues } from './audio/useSoundCues.js';
+import { isMuted, setMuted } from './audio/player.js';
 import { T, PHASE_LABEL } from './lib/strings.js';
 import Board from './components/Board.jsx';
 import Lobby, { JoinForm } from './components/Lobby.jsx';
@@ -32,36 +35,20 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [flash, setFlash] = useState(null);
-  const flashSeenEventRef = useRef(null);
   const flashTimerRef = useRef(null);
 
-  // Watch the feed for the two card moments worth a full flash. `feed` is a
-  // capped sliding window (LOG_LIMIT in useRoom.js), so its length plateaus
-  // once a room is busy enough - tracking "how many events we've seen" by
-  // count stops working the moment the window starts sliding. Tracking the
-  // last-seen event object instead (its reference survives the slice/spread
-  // in onEvents) and scanning backward until we hit it keeps working however
-  // long the room runs, and still treats an empty feed (leave/rejoin) as
-  // nothing-seen-yet.
-  useEffect(() => {
-    if (feed.length === 0) {
-      flashSeenEventRef.current = null;
-      return;
-    }
+  // Sound is a second reading of the same feed, so it gets its own cursor
+  // through the same hook rather than sharing this one.
+  useSoundCues(feed);
 
-    const lastSeen = flashSeenEventRef.current;
-    const newEvents = [];
-    for (let i = feed.length - 1; i >= 0 && feed[i] !== lastSeen; i--) {
-      newEvents.push(feed[i]);
-    }
-    flashSeenEventRef.current = feed[feed.length - 1];
+  const [muted, setMutedState] = useState(isMuted);
+  const toggleMute = () => { const next = !muted; setMuted(next); setMutedState(next); };
 
+  // The two card moments worth a full flash.
+  useNewEvents(feed, (events) => {
     let next = null;
-    for (const event of newEvents) {
-      if (event.type === 'TOKEN_MUUT_JUO' || event.type === 'TOKEN_OP') {
-        next = event;
-        break;
-      }
+    for (const event of events) {
+      if (event.type === 'TOKEN_MUUT_JUO' || event.type === 'TOKEN_OP') next = event;
     }
     if (!next) return;
 
@@ -72,7 +59,7 @@ export default function App() {
         : { kind: 'OP', op: next.op, guildId: state?.players?.find((p) => p.id === next.playerId)?.guildId },
     );
     flashTimerRef.current = setTimeout(() => setFlash(null), FLASH_DURATION_MS);
-  }, [feed, state]);
+  });
 
   useEffect(() => () => clearTimeout(flashTimerRef.current), []);
 
@@ -165,6 +152,15 @@ export default function App() {
           </button>
           <button className="iconbtn" onClick={() => { setAsideOpen((v) => !v); setMenuOpen(false); }}>
             {T.standings}
+          </button>
+          <button
+            className="iconbtn"
+            aria-pressed={!muted}
+            aria-label={T.sound}
+            title={muted ? T.soundOff : T.soundOn}
+            onClick={toggleMute}
+          >
+            {muted ? '🔇' : '🔊'}
           </button>
           <button className="iconbtn" onClick={leave}>
             {T.leaveRoom}

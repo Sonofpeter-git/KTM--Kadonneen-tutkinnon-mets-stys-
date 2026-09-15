@@ -133,6 +133,9 @@ export const T = {
 
   // topbar
   menu: 'Valikko',
+  sound: 'Äänet',
+  soundOn: 'Äänet päällä',
+  soundOff: 'Äänet pois',
 
   // rules
   rules: 'Säännöt',

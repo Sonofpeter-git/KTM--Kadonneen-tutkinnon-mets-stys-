@@ -10,7 +10,8 @@
     "test": "node --import ./test/register.mjs --test \"test/**/*.test.jsx\"",
     "inspect": "node scripts/inspect-board.mjs",
     "art": "node scripts/render-basemap.mjs",
-    "verify:map": "node scripts/verify-basemap.mjs"
+    "verify:map": "node scripts/verify-basemap.mjs",
+    "verify:sounds": "node scripts/check-sounds.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
