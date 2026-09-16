@@ -3,9 +3,19 @@
 One file per sound named in [`client/src/audio/cues.js`](../../src/audio/cues.js). Adding a
 sound to an action is one line in that table and one file here; nothing else knows.
 
-**`gulp.wav` is a synthesized placeholder**, not a recording - two pitch-swept sine bloops,
-enough to hear that the wiring works. Replace it with a real CC0 sample (freesound.org or
-Pixabay), short, mono, and the table entry can point at any format `decodeAudioData` takes:
+**Every file here is a synthesized placeholder**, not a recording - enough to hear that the
+wiring works and to tell the cues apart, nothing more:
+
+| file | cue | what it is |
+| --- | --- | --- |
+| `gulp.wav` | drinks cleared | two pitch-swept sine bloops |
+| `sad-trombone.wav` | Tutkintouudistus | four descending notes with a wobble |
+| `foghorn.wav` | Teekkariristeily | two low blasts |
+| `jackpot.wav` | the 80op disc | fast ascending arpeggio |
+| `chime.wav` | Teekkarilakki | two bell notes |
+
+Replace them with real CC0 samples (freesound.org or Pixabay), short, mono, and the table
+entry can point at any format `decodeAudioData` takes:
 
 ```js
 DRINKS_CLEARED: { src: 'gulp.mp3', ... }

@@ -39,9 +39,35 @@ export const CUES = {
     priority: 10,
   },
 
+  /*
+   * Tutkintouudistus, keyed on the reveal rather than on its effect event.
+   * TOKEN_REVEALED carries every disc kind, so the other discs are matched off
+   * their effect events below and this `when` keeps them out. Worth doing for
+   * this one disc: opening it with nothing on the transcript emits only
+   * TOKEN_UUDISTUS_NOOP, and that moment still deserves the noise.
+   */
+  TOKEN_REVEALED: {
+    src: 'sad-trombone.wav',
+    audience: ACTOR,
+    when: (event) => event.kind === 'tutkintouudistus',
+    priority: 20,
+  },
+
+  /** Three shots on arrival, no roll to save you. */
+  CRUISE: { src: 'foghorn.wav', audience: ACTOR, priority: 25 },
+
+  /** The 80op disc - three in a bag of 54. */
+  TOKEN_OP: {
+    src: 'jackpot.wav',
+    audience: ACTOR,
+    when: (event) => event.kind === 'op80',
+    priority: 30,
+  },
+
+  /** The cap: d4 becomes d6 for the rest of the night. */
+  TOKEN_LAKKI: { src: 'chime.wav', audience: ACTOR, priority: 35 },
+
   // Later, and this is the whole diff:
-  // TOKEN_REVEALED: { src: 'card-flip.mp3', audience: ACTOR,    priority: 20 },
-  // TOKEN_OP:       { src: 'cheer.mp3',     audience: ACTOR,    priority: 30 },
   // TOKEN_MUUT_JUO: { src: 'groan.mp3',     audience: TARGETS,  priority: 40 },
   // BORDER_BLOCKED: { src: 'buzzer.mp3',    audience: ACTOR,    priority: 15 },
   // GAME_FINISHED:  { src: 'fanfare.mp3',   audience: EVERYONE, priority: 50 },

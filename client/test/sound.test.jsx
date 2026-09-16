@@ -7,6 +7,9 @@ import { loadBoard } from '../../server/src/game/board.js';
 import { loadGuilds } from '../../server/src/game/guilds.js';
 import { applyAction, createRoom } from '../../server/src/game/engine.js';
 import { sanitizeEvents } from '../../server/src/game/sanitize.js';
+import {
+  startedGame, forceRoll, placeToken, revealAllExcept, player,
+} from '../../server/test/helpers.js';
 
 import { CUES, CUE_SOURCES, ACTOR, TARGETS, EVERYONE } from '../src/audio/cues.js';
 import { selectCue } from '../src/audio/selectCue.js';
@@ -128,6 +131,79 @@ test('the audiences pick out the right devices', () => {
 
   assert.equal(EVERYONE(muutJuo, { me: 'b', isRoomSpeaker: true }), true);
   assert.equal(EVERYONE(muutJuo, { me: 'b', isRoomSpeaker: false }), false);
+});
+
+/* --------------------------------------------------------------- the discs */
+
+/** Put p1 one square short of `nodeId`, then move them onto it. */
+function walkOnto(state, nodeId) {
+  const approach = board.node(nodeId).edges.find((e) => e.type !== 'flight').target;
+  player(state, 'p1').nodeId = approach;
+  const rigged = forceRoll(state, 4, 1);
+  const rolled = applyAction(rigged, { type: 'ROLL', playerId: 'p1' }, deps).state;
+  return applyAction(rolled, { type: 'MOVE', playerId: 'p1', targetId: nodeId }, deps);
+}
+
+/** Turn a known disc over on arrival, and return what the room heard. */
+function open(kind, city = 'tampere') {
+  let state = startedGame();
+  revealAllExcept(state, []);
+  placeToken(state, city, kind);
+  const arrived = walkOnto(state, city);
+  return sanitizeEvents(applyAction(arrived.state, {
+    type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' },
+  }, deps).events);
+}
+
+const heard = (events, me = 'p1') => selectCue(events, { me, isRoomSpeaker: false });
+
+test('the 80op disc cues the jackpot on the team that turned it', () => {
+  const events = open('op80');
+  const hit = heard(events);
+
+  assert.ok(hit, 'expected a cue for the 80op disc');
+  assert.equal(hit.cue.src, 'jackpot.wav');
+  assert.equal(hit.event.type, 'TOKEN_OP');
+  assert.equal(heard(events, 'p2'), null, 'nobody else hears it');
+});
+
+test('the smaller op discs stay quiet - the jackpot is for the 80', () => {
+  assert.equal(heard(open('op40')), null, '40op');
+  assert.equal(heard(open('op60')), null, '60op');
+});
+
+test('the Teekkarilakki chimes', () => {
+  const hit = heard(open('teekkarilakki'));
+
+  assert.equal(hit?.cue.src, 'chime.wav');
+  assert.equal(hit.event.type, 'TOKEN_LAKKI');
+});
+
+test('Tutkintouudistus sounds even when there is nothing to redo', () => {
+  // A team with an empty transcript emits only TOKEN_UUDISTUS_NOOP, which has
+  // no cue of its own. Keying the cue on the reveal is what keeps the moment
+  // audible - the disc is just as much of a groan when it costs you nothing.
+  const events = open('tutkintouudistus');
+  assert.ok(
+    events.some((e) => e.type === 'TOKEN_UUDISTUS_NOOP'),
+    'fixture should have nothing on the transcript to redo',
+  );
+
+  const hit = heard(events);
+  assert.equal(hit?.cue.src, 'sad-trombone.wav');
+  assert.equal(hit.event.type, 'TOKEN_REVEALED');
+});
+
+test('the Teekkariristeily sounds the foghorn on whoever stopped there', () => {
+  const cruise = board.raw.nodes.find((n) => n.type === 'cruise');
+  assert.ok(cruise, 'the board should carry a cruise square');
+
+  const events = sanitizeEvents(walkOnto(revealAllExcept(startedGame(), []), cruise.id).events);
+  const hit = heard(events);
+
+  assert.equal(hit?.cue.src, 'foghorn.wav');
+  assert.equal(hit.event.type, 'CRUISE');
+  assert.equal(heard(events, 'p2'), null, 'nobody else hears it');
 });
 
 /* ------------------------------------------------------------- the assets */
