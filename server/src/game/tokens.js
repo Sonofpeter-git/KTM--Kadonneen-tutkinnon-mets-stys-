@@ -9,6 +9,9 @@ import { shuffle } from './rng.js';
 /** OP needed before graduating counts for anything. */
 export const OP_TO_GRADUATE = 300;
 
+/** Halfway shout-out: crossing this many OP is the "Kandi" milestone. */
+export const OP_KANDI = 180;
+
 /** Rolling this or higher costs a travel beer (matkaolut), even if you move less. */
 export const TRAVEL_BEER_THRESHOLD = 4;
 
@@ -120,10 +123,14 @@ export function applyToken(state, player, kind, openCost) {
     case 'op40':
     case 'op60':
     case 'op80': {
+      const before = player.op;
       player.op += meta.op;
       player.drinksOwed += meta.drinks;
       player.tokens.push({ kind, op: meta.op, drinks: meta.drinks });
       events.push({ type: 'TOKEN_OP', playerId: player.id, kind, op: meta.op });
+      if (before < OP_KANDI && player.op >= OP_KANDI) {
+        events.push({ type: 'KANDI_REACHED', playerId: player.id, op: player.op });
+      }
       break;
     }
 

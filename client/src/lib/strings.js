@@ -131,6 +131,9 @@ export const T = {
   finalStandings: 'Loppusijoitukset',
   place: 'sija',
 
+  // flash overlays
+  kandiReached: 'Kandi suoritettu!',
+
   // topbar
   menu: 'Valikko',
 
@@ -210,6 +213,7 @@ export function describeEvent(event, nameOf) {
       return `${who} suorittaa ${event.op} op -kurssin uudelleen: ${beers(event.drinks)}`;
     case 'TOKEN_UUDISTUS_LOST': return `${who} menetti ${event.op} op`;
     case 'TOKEN_UUDISTUS_NOOP': return `${who} ei ole vielä suorittanut mitään`;
+    case 'KANDI_REACHED': return `${who} on suorittanut Kandin!`;
     case 'TOKEN_MUUT_JUO': return `${who}: muut juo! (${event.affected.length})`;
     case 'TOKEN_DEFERRED': return `${who} jätti kiekon kääntämättä`;
     case 'PVP_ASSIGNED': return `${who} määräsi oluen: ${nameOf(event.targetId)}`;

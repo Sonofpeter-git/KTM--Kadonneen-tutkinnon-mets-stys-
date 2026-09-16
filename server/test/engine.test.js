@@ -362,6 +362,30 @@ test('disc: turning it on arrival costs two beers plus the disc', () => {
   assert.equal(activePlayerId(state), 'p2');
 });
 
+test('disc: crossing 180 op fires the Kandi milestone', () => {
+  let state = startedGame();
+  player(state, 'p1').op = 150;
+
+  state = arriveAt(state, 'tampere', 'op40');
+  const result = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } });
+
+  assert.equal(player(result.state, 'p1').op, 190);
+  const shout = result.events.find((e) => e.type === 'KANDI_REACHED');
+  assert.ok(shout, 'crossing 180 op fires the shout');
+  assert.equal(shout.op, 190);
+});
+
+test('disc: no Kandi shout for a disc that does not cross 180', () => {
+  let state = startedGame();
+  player(state, 'p1').op = 0;
+
+  state = arriveAt(state, 'tampere', 'op40');
+  const result = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } });
+
+  assert.equal(player(result.state, 'p1').op, 40);
+  assert.ok(!result.events.some((e) => e.type === 'KANDI_REACHED'));
+});
+
 test('disc: waiting leaves it face down, to be turned next turn for one beer', () => {
   let state = arriveAt(startedGame(), 'tampere', 'op40');
   state = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'WAIT' } }).state;

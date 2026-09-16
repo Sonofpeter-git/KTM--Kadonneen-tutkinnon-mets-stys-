@@ -34,7 +34,10 @@ export default function EventLog({ feed, state, guildsById }) {
 }
 
 function tone(type) {
-  if (type.startsWith('GRADUATED') || type === 'TOKEN_OP' || type === 'TOKEN_LAKKI') return 'good';
+  if (
+    type.startsWith('GRADUATED') || type === 'TOKEN_OP' || type === 'TOKEN_LAKKI' ||
+    type === 'KANDI_REACHED'
+  ) return 'good';
   if (
     type === 'TRAVEL_BEER' || type === 'CRUISE' || type === 'BORDER_BLOCKED' ||
     type === 'PVP_ASSIGNED' || type === 'TOKEN_MUUT_JUO' || type === 'WATER_ROUTE' ||

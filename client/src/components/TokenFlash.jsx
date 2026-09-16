@@ -12,7 +12,31 @@ export default function TokenFlash({ flash, guildsById, viewerGuildId, onDismiss
     );
   }
 
+  if (flash.kind === 'UUDISTUS') {
+    return (
+      <button className="stage__overlay flash-overlay" onClick={onDismiss}>
+        <p className="flash-overlay__shout">{TOKEN_LABEL.tutkintouudistus}</p>
+      </button>
+    );
+  }
+
   const showTeam = flash.guildId !== viewerGuildId;
+
+  if (flash.kind === 'KANDI') {
+    return (
+      <button
+        className="stage__overlay flash-overlay"
+        style={{ '--team': guildsById[flash.guildId]?.color }}
+        onClick={onDismiss}
+      >
+        <p className="flash-overlay__shout">{T.kandiReached}</p>
+        {showTeam && (
+          <p className="flash-overlay__teamname">{guildsById[flash.guildId]?.name}</p>
+        )}
+      </button>
+    );
+  }
+
   return (
     <button
       className="stage__overlay flash-overlay"

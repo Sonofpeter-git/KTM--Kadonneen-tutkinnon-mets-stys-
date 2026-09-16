@@ -13,6 +13,21 @@ import TokenFlash from './components/TokenFlash.jsx';
 
 const FLASH_DURATION_MS = 2000;
 
+/** Which feed events are worth a full-screen flash, and what to show. */
+function toFlash(event, state) {
+  const guildOf = (playerId) => state?.players?.find((p) => p.id === playerId)?.guildId;
+
+  switch (event.type) {
+    case 'TOKEN_MUUT_JUO': return { kind: 'MUUT_JUO' };
+    case 'TOKEN_OP': return { kind: 'OP', op: event.op, guildId: guildOf(event.playerId) };
+    case 'TOKEN_UUDISTUS_REDRINK':
+    case 'TOKEN_UUDISTUS_LOST':
+      return { kind: 'UUDISTUS' };
+    case 'KANDI_REACHED': return { kind: 'KANDI', guildId: guildOf(event.playerId) };
+    default: return null;
+  }
+}
+
 /**
  * Role decides the shape of the screen, not what the server will accept:
  *   Gamer      map + their own action panel
@@ -58,19 +73,13 @@ export default function App() {
 
     let next = null;
     for (const event of newEvents) {
-      if (event.type === 'TOKEN_MUUT_JUO' || event.type === 'TOKEN_OP') {
-        next = event;
-        break;
-      }
+      next = toFlash(event, state);
+      if (next) break;
     }
     if (!next) return;
 
     clearTimeout(flashTimerRef.current);
-    setFlash(
-      next.type === 'TOKEN_MUUT_JUO'
-        ? { kind: 'MUUT_JUO' }
-        : { kind: 'OP', op: next.op, guildId: state?.players?.find((p) => p.id === next.playerId)?.guildId },
-    );
+    setFlash(next);
     flashTimerRef.current = setTimeout(() => setFlash(null), FLASH_DURATION_MS);
   }, [feed, state]);
 
