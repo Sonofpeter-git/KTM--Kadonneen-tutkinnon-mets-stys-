@@ -67,7 +67,12 @@ cd client
 npm test                   # 26 render tests, driven by real engine states
 npm run build              # production bundle
 npm run inspect            # drive real Chrome against a running stack, measure the board
+npm run verify:sounds      # decode every cue sample in real Chrome (needs a server on :4173)
 ```
+
+`npm run verify:sounds` loads each sample named in `src/audio/cues.js` and checks the browser
+can actually decode it: a file it chokes on is silence, and silence is exactly what a working
+cue looks like from the outside. Run it after swapping the placeholder for a real recording.
 
 `npm run inspect` seeds a started game over the socket, opens the app in your installed Chrome
 (no browser download - it uses `channel: 'chrome'`), reports the box of every board layer, and
@@ -96,7 +101,7 @@ tools/fetch-geodata.mjs       refreshes the coastline, lakes and borders from Na
 tools/art/geodata.json        that geometry, vendored so rendering needs no network
 tools/art/board-source.jpg    the retired terrain photograph the board used to be painted from
 server/
-  data/nodes.json             216 nodes, 54 of them city squares
+  data/nodes.json             259 nodes, 54 of them city squares
   data/guilds.json            the eight guilds and their founding years
   src/game/                   the rules, as pure functions
     engine.js                 the turn machine: applyAction(state, action) -> {state, events}
@@ -109,11 +114,15 @@ server/
   src/sockets.js              Socket.io transport - contains no rules
 client/
   public/board.jpg            generated background - see `npm run art`
+  public/sounds/              cue samples; gulp.wav is a synthesized placeholder
   scripts/render-basemap.mjs  draws it; scripts/verify-basemap.mjs checks it still fits
   src/components/Board.jsx    base plate + SVG routes + DOM squares, zoom and pan
   src/components/             ActionPanel, Scoreboard, Lobby, AdminSidebar, EventLog, Finished
   src/net/useRoom.js          the socket, and everything that arrives on it
   src/net/socket.js           connection and the persisted player id
+  src/net/useNewEvents.js     what arrived since last time, over the capped feed
+  src/audio/cues.js           event type -> sound, and whose phone plays it
+  src/audio/player.js         AudioContext, decode cache, master gain
   src/lib/strings.js          every player-facing string, in one file
   src/styles/                 design tokens, then layout
 ```
@@ -136,7 +145,7 @@ Turn order runs **youngest guild first**, by founding year (rulebook step 0):
 | 4 | Tampereen TietoTeekkarikilta ry (TiTe) | Tampere | 1990 |
 | 5 | Tutti ry | Vaasa | 1989 |
 | 6 | Oulun Tietoteekkarit ry (OTiT) | Oulu | 1988 |
-| 7 | Tietokilta ry (TiK) | Otaniemi | 1986 |
+| 7 | Tietokilta ry (TiK) | Otaniemi (starts on the Espoo square) | 1986 |
 | 8 | Cluster ry | Lappeenranta | 1984 |
 
 Digit and DaTe share 1999, so the server flips a coin between them. **Åbo and Turku are the
@@ -153,8 +162,16 @@ pretending it was founded in year zero.
 
 The board is painted in the style of the physical game — flat green land, poster-blue
 water, national borders in dashed ink — with the game graph drawn on top: 54 city squares
-(one per cardboard disc), 161 connector dots, the Pietari–Ivalo flight, six ferry
+(one per cardboard disc), 203 connector dots, the Pietari–Ivalo flight, six ferry
 crossings, the Haaparanta border, and a Teekkariristeily square on the Stockholm run.
+
+The graph itself — which cities exist, which routes join them, and how many dots each
+route carries — is **transcribed from photographs of the physical mat** in `ktm-board/`,
+not synthesised. Dot count is the game's distance metric, so it is counted off the
+artwork rather than derived from distance. Six of the connector dots are *junctions*: the
+mat forks routes at plain dots, not only at cities, so a dot can carry three or four
+edges. They are named in `SPECIAL_NODES` purely so the adjacency table has something to
+attach the branches to.
 
 ### The background is generated
 
@@ -188,9 +205,9 @@ world the picture covers, and every city is projected into that frame:
 ```js
 const BASEMAP = {
   image: '/board.jpg',
-  width: 1470, height: 2912,
+  width: 1980, height: 2916,
   projection: 'mercator',
-  bounds: { north: 70.6, south: 58.8, west: 17.104, east: 31.296 },
+  bounds: { north: 70.6, south: 58.4, west: 14.198, east: 33.803 },
 };
 ```
 
@@ -209,9 +226,12 @@ dry land — there was none there to stand on.
 So the window is now a **decision** and the coast is drawn to match it. The renderer
 projects the real geometry through the very same bounds that place the city circles, which
 means the map and the cities cannot disagree: neither is measured against the other. The
-window is chosen so every node sits at least 3% inside the edge, and so the longitude span
-is exactly what the latitude span needs for the Mercator aspect to equal the image's own
-1470×2912 — nothing is stretched.
+window is chosen so every node sits well inside the edge — Söderhamn at 17.06°E and
+Ilomantsi at 30.93°E are the horizontal extremes — and so the longitude span is exactly
+what the latitude span needs for the Mercator aspect to equal the image's own 1980×2916,
+which is in turn the physical mat's 203:299. Nothing is stretched, and the digital board
+has the proportions of the real one. The older window stopped at 17.104°E, which the
+Swedish coast alone now puts out of date: Söderhamn and Gävle both fell outside it.
 
 ### Checking it
 
@@ -244,7 +264,7 @@ the plain graph.
 
 ```jsonc
 {
-  "aspectRatio": 0.5048,                       // the image's own shape
+  "aspectRatio": 0.68,                         // the image's own shape
   "basemap": { "image": "/board.jpg", "bounds": { ... } },
   "homeCities": { "turku": ["digit", "date"], ... },
   "cruiseNode": "…",
@@ -338,6 +358,26 @@ standings, and each team carries two badges — grey for beers seen off, red for
 owed. A leader override adjusts the debt without touching the tally, because a correction is
 not a beer anyone drank. The endgame card closes with the total.
 
+**Drinking makes a noise on your own phone.** Marking beers done plays a gulp - on the
+device of the team that drank, and nowhere else. That scoping is the whole design: a cue
+played everywhere would be the same sample firing on nine phones tens of milliseconds
+apart, which is slapback, not emphasis. It also means the TV is quiet without anything
+checking for a role, because a spectator never performs an action and so never matches.
+
+Which event makes which noise lives in one table, [`src/audio/cues.js`](client/src/audio/cues.js),
+keyed by event type exactly like `describeEvent()` and the log's `tone()` are. Adding a sound
+to card-opening later is one line there and one file in `public/sounds/`; the server is not
+involved at all, because a cue is a rendering of an event it already broadcasts. Audiences are
+predicates rather than a flag, so `TOKEN_MUUT_JUO` can sound on the phones named in its
+`affected` list, and a future room-wide cue can be gated on the one device that volunteers as
+the speaker.
+
+Sound is on by default and muted from the topbar. There is no "enable audio" button because
+there does not need to be: the team a cue belongs to has just tapped their own screen, which
+is the gesture the autoplay policy wants, so the context unlocks on the first touch anywhere.
+Audio failing is never fatal - a missing file, a blocked fetch or a browser without Web Audio
+just leaves the game quiet, and the log line already said what happened.
+
 **Reconnection is free.** The player id is generated once into `localStorage`, and the room
 code is stored beside it, so both a dropped socket *and* a full page reload silently reclaim
 the same seat, guild, position and score. A phone that locks mid-game loses nothing. The lobby
@@ -416,15 +456,15 @@ rendered board markup contains no disc names, and the smoke test watching every 
 
 | Command | What it proves | Status |
 |---|---|---|
-| `node tools/generate-board.mjs` | the map is well-formed and connected | ✅ 216 nodes, 54 cities |
+| `node tools/generate-board.mjs` | the map is well-formed and connected | ✅ 259 nodes, 54 cities |
 | `server: npm test` | every rule, in isolation | ✅ 78 passing |
-| `server: npm run sim -- 60` | 60 complete games; no disc lost, no OP negative, no dead phase, all terminate | ✅ ~103 rolls, ~184 beers, ~22 skipped turns per game |
+| `server: npm run sim -- 60` | 60 complete games; no disc lost, no OP negative, no dead phase, all terminate | ✅ ~166 rolls, ~188 beers, ~19 skipped turns per game |
 | `server: npm run smoke` | sockets + reducer + store wired together, against real Redis | ✅ 11 checks |
 | `client: npm test` | every view renders, from real engine states | ✅ 26 passing |
 | `client: npm run build` | production bundle | ✅ 241 kB / 77 kB gzipped |
 | `client: npm run inspect` | the board actually lays out in Chrome | ✅ image loads, squares spread across the plate |
 | `client: npm run verify:map` | the painted map and the city circles agree | ✅ 15 / 15 probes, no node past 5 px of water |
-| `client: npm run art` | draws the background from the same bounds that place the cities | ✅ 1470×2912, 541 kB |
+| `client: npm run art` | draws the background from the same bounds that place the cities | ✅ 1980×2916, 717 kB |
 | `docker compose up --build` | both containers healthy; join → start → roll → move on one origin | ✅ verified, rooms survive a restart |
 
 The client tests build their fixtures with the real engine and pass them through the real
@@ -438,9 +478,11 @@ automated link between the two halves — keep it.
 - **Leadership never transfers.** If the Game Leader clears their browser storage, nobody can
   start the game or reach the overrides. A refresh is fine — that is now restored — but a
   wiped identity is not.
-- **The board is a real map of Finland, painted to match the physical game.** Cities sit on
-  their true coordinates rather than being traced off the plywood, so the layout is
-  geographically honest but not square-for-square identical to the real board.
+- **The graph is the real board's; the positions are real geography.** Cities, routes and
+  dot counts are transcribed from the photographs, so the board plays square-for-square
+  like the mat. Positions are still each city's true coordinates rather than traced pixel
+  locations, so the *layout* is geographically honest rather than reproducing the mat's
+  hand-painted wobble.
 - **Only the notable lakes are drawn.** The coastline comes from Natural Earth 1:10m, which
   carries Saimaa, Päijänne, Inari, Ladoga and their like but not the thousands of small
   ones. Finnish lakeland therefore reads cleaner than it did on the terrain photograph —

@@ -256,7 +256,9 @@ test('move: a sea crossing costs one beer', () => {
   state = forceRoll(state, 4, 1);
   state = act(state, { type: 'ROLL', playerId: 'p1' }).state;
 
-  const ferry = 'maarianhamina__turku_1';  // the first square of the Aland ferry
+  // the first square of the Aland ferry, whichever dot the board puts there
+  const start = player(state, 'p1').nodeId;
+  const ferry = board.node(start).edges.find((e) => e.type === 'water').target;
   assert.ok(state.turnState.validDestinations[ferry]);
   state = act(state, { type: 'MOVE', playerId: 'p1', targetId: ferry }).state;
   assert.equal(player(state, 'p1').drinksOwed, 1);

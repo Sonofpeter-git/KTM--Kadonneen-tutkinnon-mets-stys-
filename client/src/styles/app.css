@@ -75,6 +75,8 @@
   font-size: 0.85rem;
 }
 .iconbtn:hover { background: var(--surface-raised); }
+/* Muted should read as off, not just as a different glyph. */
+.iconbtn[aria-pressed='false'] { color: var(--text-dim); }
 
 .stage { grid-area: stage; position: relative; min-height: 0; background: #050505; }
 .stage__loading { position: absolute; inset: 0.75rem; }
