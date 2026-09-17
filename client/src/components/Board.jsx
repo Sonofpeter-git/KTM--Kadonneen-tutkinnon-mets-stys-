@@ -271,6 +271,7 @@ function Pawns({ node, players, guildsById }) {
             title={`${guild?.name ?? p.name} - ${p.op} op`}
           >
             {cap}
+            {p.pokka && <span className="pawn__pokka" title={T.pokka} aria-hidden="true" />}
             <span className="pawn__body">{initials(guild?.name ?? p.name)}</span>
           </span>
         );

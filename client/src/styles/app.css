@@ -743,6 +743,15 @@
   animation: pulse 1.6s ease-in-out infinite;
 }
 
+/* The water-break nudge: same top slot as an egg, but calm - no pulse, no red. */
+.toast--calm {
+  top: 3.5rem;
+  bottom: auto;
+  background: var(--blue);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
 .chip--dim { background: transparent; color: var(--text-faint); }
 
 /* ----------------------------------------------------------- easter eggs */
@@ -780,6 +789,19 @@
 }
 .pawn__cap--illegal { rotate: -28deg; translate: -30% 0; }
 
+/* Olutpokka: a little crate tucked under the pawn's arm, for the rest of the game. */
+.pawn__pokka {
+  position: absolute;
+  right: -0.35rem;
+  bottom: -0.2rem;
+  width: 0.5rem;
+  height: 0.4rem;
+  border-radius: 1px;
+  background: repeating-linear-gradient(90deg, #d9912b 0 0.1rem, #8a5412 0.1rem 0.125rem);
+  box-shadow: 0 0 0 1px #2d1c06;
+}
+.chip--pokka { background: rgba(217, 145, 43, 0.2); color: #e8a547; }
+
 .rules__count { margin: 0; color: var(--yellow); font-size: 0.8rem; }
 .rules__locked dt { color: var(--text-faint); letter-spacing: 0.2em; }
 .rules__fresh { color: var(--yellow); font-style: normal; font-weight: 400; }
@@ -798,7 +820,18 @@
 /* The buttons would otherwise inherit the dark form-ink onto their dark fill. */
 .shell--kela .iconbtn { background: #f3ecd9; border-color: #8a7d5c; color: #2d2a22; }
 .shell--kela .iconbtn:hover { background: #fffaf0; }
-.shell--kela .topbar::after {
+/* The lobby gets the same form, so typing the code is rewarded straight away. */
+.shell--kela .lobby__head {
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  background: #e6dcc2;
+  color: #2d2a22;
+  border-bottom: 3px double #8a7d5c;
+}
+.shell--kela .lobby__code { color: #9b2c22; }
+.shell--kela .topbar::after,
+.shell--kela .lobby__head::after {
   content: 'Hakemus käsittelyssä';
   padding: 0.1rem 0.4rem;
   border: 2px solid #9b2c22;
@@ -812,7 +845,8 @@
 .shell--kela .board__image { filter: sepia(0.75) saturate(0.6) brightness(0.8); }
 
 /* WAPP: serpentine streamers along the top edge of the board, drifting. */
-.shell--wappu .stage::before {
+.shell--wappu .stage::before,
+.shell--wappu .lobby__head::before {
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
@@ -825,19 +859,25 @@
   background-size: 300% 100%;
   animation: shimmer 6s linear infinite;
 }
+.shell--wappu .lobby__head { position: relative; padding-top: 0.9rem; }
 .shell--wappu .topbar { border-bottom-color: var(--yellow); }
 
 /* SAUN: warm, and fogged at the bottom of the screen like a sauna window. */
-.shell--sauna .board__image { filter: sepia(0.3) saturate(1.2) brightness(0.9) hue-rotate(-10deg); }
-.shell--sauna .stage::after {
+.shell--sauna .board__image { filter: sepia(0.6) saturate(1.5) brightness(0.85) hue-rotate(-18deg); }
+.shell--sauna .topbar,
+.shell--sauna .lobby__head { border-bottom: 2px solid #c8703a; }
+.shell--sauna .stage::after,
+.shell--sauna.shell--entry::after {
   content: '';
   position: absolute;
   inset: auto 0 0 0;
-  height: 35%;
+  height: 45%;
   z-index: 3;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(255, 244, 230, 0.28), transparent);
+  background: linear-gradient(to top, rgba(255, 236, 214, 0.42), transparent);
 }
+/* The lobby scrolls, so its fog sits on the window rather than the page. */
+.shell--sauna.shell--entry::after { position: fixed; }
 
 /* ------------------------------------------------------------ responsive */
 

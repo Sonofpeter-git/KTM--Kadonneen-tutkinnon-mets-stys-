@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRoom } from './net/useRoom.js';
 import { useNewEvents } from './net/useNewEvents.js';
 import { useSoundCues } from './audio/useSoundCues.js';
 import { isMuted, setMuted } from './audio/player.js';
-import { T, PHASE_LABEL } from './lib/strings.js';
+import { T, PHASE_LABEL, describeEvent } from './lib/strings.js';
 import Board from './components/Board.jsx';
 import Lobby, { JoinForm } from './components/Lobby.jsx';
 import ActionPanel, { guildName } from './components/ActionPanel.jsx';
@@ -63,6 +63,7 @@ export default function App() {
   const flashTimerRef = useRef(null);
   const [eggsOpen, setEggsOpen] = useState(false);
   const [eggToast, setEggToast] = useState(null);
+  const [paceToast, setPaceToast] = useState(null);
 
   // Sound is a second reading of the same feed, so it gets its own cursor
   // through the same hook rather than sharing this one.
@@ -86,6 +87,7 @@ export default function App() {
         rememberEgg(event.egg);
         if (EGGS[event.egg]?.loud === 'toast') setEggToast(event.egg);
       }
+      if (event.type === 'PACE_WARNING' && state?.drinkUnit !== 'sip') setPaceToast(event);
     }
     if (!next) return;
 
@@ -96,21 +98,26 @@ export default function App() {
 
   useEffect(() => () => clearTimeout(flashTimerRef.current), []);
 
+  // The eggs only this device can see get claimed on the server, so they land
+  // in the feed and on the endgame card like the rest. The server keeps the
+  // first claim per room, so the toast and feed line come back as its event.
+  const eggsFound = state?.eggsFound;
+  const claimEgg = useCallback((egg) => {
+    rememberEgg(egg);
+    if (!eggsFound?.some((f) => f.egg === egg)) send('req_egg', { egg });
+  }, [eggsFound, send]);
+
   const theme = roomTheme(state?.code);
   useEffect(() => {
-    if (theme) rememberEgg('huonekoodi');
-  }, [theme]);
+    if (theme) claimEgg('huonekoodi');
+  }, [theme, claimEgg]);
 
-  // A crooked cap on a one-rem pawn is too small to count as noticed, so an
-  // out-of-season cap also raises the toast - once per room, not per render.
+  // A crooked cap on a one-rem pawn is too small to count as noticed, so the
+  // claim's event also raises a toast.
   const illegalCap = !isCapSeason() && !!state?.players?.some(hasCap);
-  const capToastRoomRef = useRef(null);
   useEffect(() => {
-    if (!illegalCap || capToastRoomRef.current === state?.code) return;
-    capToastRoomRef.current = state?.code;
-    rememberEgg('lakkikausi');
-    setEggToast('lakkikausi');
-  }, [illegalCap, state?.code]);
+    if (illegalCap) claimEgg('lakkikausi');
+  }, [illegalCap, claimEgg]);
 
   const guildsById = useMemo(
     () => Object.fromEntries(guilds.map((g) => [g.id, g])),
@@ -151,7 +158,7 @@ export default function App() {
 
   if (state.status === 'LOBBY') {
     return (
-      <main className="shell shell--entry">
+      <main className={`shell shell--entry ${theme ? `shell--${theme}` : ''}`}>
         {banner}
         <Lobby
           state={state} guilds={guilds} me={me}
@@ -298,7 +305,19 @@ export default function App() {
       {eggsOpen && <EggsPanel found={state.eggsFound} onClose={() => setEggsOpen(false)} />}
 
       {error && <Toast message={error} onDismiss={dismissError} />}
-      {eggToast && (
+      {/* One top toast at a time: a water break outranks a trophy, and the
+          egg is still waiting underneath when this one is tapped away. */}
+      {paceToast ? (
+        <Toast
+          variant="calm"
+          message={describeEvent(
+            paceToast,
+            (id) => guildName(guildsById, state.players.find((p) => p.id === id)),
+            state.drinkUnit,
+          )}
+          onDismiss={() => setPaceToast(null)}
+        />
+      ) : eggToast && (
         <Toast
           variant="good"
           message={`${EGGS[eggToast].title} - ${EGGS[eggToast].blurb}`}

@@ -99,12 +99,72 @@ export function applyAction(state, action, deps) {
     case 'RESOLVE': emit(resolve(draft, action, deps)); break;
     case 'BORDER_ROLL': emit(borderRoll(draft, action, deps)); break;
     case 'LEADER_OVERRIDE': emit(leaderOverride(draft, action, deps)); break;
+    case 'CLAIM_EGG': emit(claimEgg(draft, action)); break;
     default: throw new GameError('UNKNOWN_ACTION', `unknown action ${action.type}`);
   }
 
+  emit(trackAssigned(state, draft, action, events));
   const kept = recordEggs(draft, events);
   draft.log = [...draft.log, ...kept].slice(-LOG_LIMIT);
   return { state: draft, events: kept };
+}
+
+/**
+ * Drinks piled on one team between two of its own turns before it earns an egg.
+ * Reached in about 16% of simulated games (200 games, 8 teams); 8 was 1%.
+ */
+const EGG_PILED_ON = 7;
+
+/**
+ * A water break is suggested when a team is handed this many drinks inside the
+ * window. From the same simulation, ~2% of two-round stretches reach 8, which at
+ * ~40s a turn is about four nudges across an 8-team game - rare enough to be
+ * read rather than dismissed. Tune here if real games feel different.
+ */
+export const PACE_LIMIT = 8;
+export const PACE_WINDOW_MS = 10 * 60 * 1000;
+
+/**
+ * Drinks the game hands out, as opposed to drinks marked done.
+ *
+ * Measured on assignment because marking is batched: one hold clears everything
+ * owed, so press times say nothing about how fast anyone drank. Clearing and
+ * leader corrections are not the game handing anything out.
+ *
+ * The pace check needs `action.at`, which only the socket layer stamps - tests
+ * and the simulator have no clock, and this reducer never reads one.
+ */
+function trackAssigned(before, draft, action, events) {
+  const handsOut = action.type !== 'CLEAR_DRINKS' && action.type !== 'LEADER_OVERRIDE';
+  const out = [];
+
+  for (const p of handsOut ? draft.players : []) {
+    const added = p.drinksOwed - (findPlayer(before, p.id)?.drinksOwed ?? 0);
+    if (added <= 0) continue;
+
+    p.roundLoad = (p.roundLoad ?? 0) + added;
+    if (p.roundLoad >= EGG_PILED_ON) {
+      out.push({ type: 'EGG_FOUND', playerId: p.id, egg: 'kaikki_paalle' });
+    }
+
+    if (action.at == null) continue;
+    p.recentDrinks = [...(p.recentDrinks ?? []), { at: action.at, n: added }]
+      .filter((d) => action.at - d.at < PACE_WINDOW_MS);
+    const inWindow = p.recentDrinks.reduce((n, d) => n + d.n, 0);
+    // Once per window per team, or a bad stretch would nag on every action.
+    if (inWindow >= PACE_LIMIT && !(p.paceWarnedAt > action.at - PACE_WINDOW_MS)) {
+      p.paceWarnedAt = action.at;
+      out.push({
+        type: 'PACE_WARNING', playerId: p.id, drinks: inWindow, minutes: PACE_WINDOW_MS / 60000,
+      });
+    }
+  }
+
+  // After the tally, so a round's load runs from one turn start to the next.
+  for (const e of events) {
+    if (e.type === 'TURN_BEGAN') findPlayer(draft, e.playerId).roundLoad = 0;
+  }
+  return out;
 }
 
 /**
@@ -124,6 +184,28 @@ function recordEggs(state, events) {
     state.eggsFound.push({ egg: event.egg, playerId: event.playerId });
     return true;
   });
+}
+
+/**
+ * Eggs only a client can see: a room theme (the server has never heard of
+ * them), a hold abandoned on one phone, and a cap worn out of season by that
+ * phone's clock. Taken on trust - it is a party game - but only from this list,
+ * so no client can award itself an egg the server judges.
+ *
+ * Claiming files them through recordEggs like any other, which is what puts
+ * them in the feed and on the endgame card, and makes a repeat claim a no-op.
+ */
+const CLIENT_EGGS = new Set(['huonekoodi', 'et_uskalla', 'lakkikausi']);
+
+function claimEgg(state, { playerId, egg }) {
+  requirePlayer(state, playerId);
+  if (!CLIENT_EGGS.has(egg)) throw new GameError('BAD_EGG', `${egg} cannot be claimed`);
+  if (egg !== 'lakkikausi') return [{ type: 'EGG_FOUND', playerId, egg }];
+
+  // Credited to whoever wears the cap, not to whichever phone noticed first.
+  const wearer = state.players.find((p) => p.tokens?.some((t) => t.kind === 'teekkarilakki'));
+  if (!wearer) throw new GameError('BAD_EGG', 'nobody is wearing a cap');
+  return [{ type: 'EGG_FOUND', playerId: wearer.id, egg }];
 }
 
 /* ------------------------------------------------------------------ lobby */
@@ -158,6 +240,7 @@ function join(state, { playerId, name }) {
     tokens: [],
     place: null,
     borderFails: 0,
+    pokka: false,
   });
 
   return [{ type: 'PLAYER_JOINED', playerId, role }];
@@ -217,6 +300,7 @@ function startGame(state, { playerId }, deps) {
     p.tokens = [];
     p.place = null;
     p.borderFails = 0;
+    p.pokka = false;
   }
 
   state.board.tokens = T.dealTokens(state, deps.board.cityIds);
@@ -456,10 +540,21 @@ function borderRoll(state, { playerId }, deps) {
 
 /* -------------------------------------------------------------- resolution */
 
+/** Where an olutpokka is picked up. Landing only: a route through does not shop. */
+const POKKA_SQUARES = ['tallinna', 'haaparanta'];
+
 /** Everything that happens because of the square a team came to rest on. */
 function land(state, player, deps) {
   const events = [];
   const node = deps.board.node(player.nodeId);
+
+  // A booze run: stopping in Tallinn or at the Haaparanta border brings home a
+  // beer crate, carried for the rest of the game. A mark, not a rule - it
+  // changes nothing but how the team looks.
+  if (POKKA_SQUARES.includes(node.id) && !player.pokka) {
+    player.pokka = true;
+    events.push({ type: 'POKKA_GAINED', playerId: player.id, at: node.id });
+  }
 
   // Rulebook step 3: the cruise square pours three shots on arrival.
   if (node.type === 'cruise') {
@@ -604,7 +699,9 @@ function endgameEggs(state, winner) {
 
   // Winning on the lowest tab in the room. Needs rivals to be lower than, so a
   // one-team game cannot claim it.
-  const drunk = (p) => p.drinksTaken ?? 0;
+  // Owed counts too: the winning turn's own beers are still on the tab when the
+  // game ends, and leaving them unmarked must not make anyone look sober.
+  const drunk = (p) => (p.drinksTaken ?? 0) + (p.drinksOwed ?? 0);
   if (rivals.length > 0 && rivals.every((p) => drunk(p) > drunk(winner))) {
     events.push({ type: 'EGG_FOUND', playerId: winner.id, egg: 'raitis_voittaja' });
   }

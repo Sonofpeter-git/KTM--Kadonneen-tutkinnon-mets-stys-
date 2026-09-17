@@ -57,6 +57,12 @@ export const EGGS = {
     title: 'Rajavartija muistaa sinut',
     blurb: 'Neljä epäonnistunutta heittoa. Hän tuntee sinut jo nimeltä.',
   },
+  kaikki_paalle: {
+    tier: 'maisteri',
+    loud: 'toast',
+    title: 'Kaikki kaatuu päälle',
+    blurb: 'Seitsemän juomaa kahden oman vuoron välissä. Noppa ei pidä teistä.',
+  },
   tasan_300: {
     tier: 'maisteri',
     loud: 'flash',

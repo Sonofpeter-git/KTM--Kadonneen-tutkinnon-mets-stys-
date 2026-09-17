@@ -83,7 +83,8 @@ export function rules(unit) {
     { title: 'Voitto', body: 'Ensimmäinen kotiin päässyt joukkue, jolla on vähintään 300 op. Muut sijat ratkeavat sen hetken opintopisteillä.' },
     // The only hint that the room-code eggs exist. Without it nobody ever
     // types KELA and the whole ambient tier goes undiscovered.
-    { title: 'Löydöt', body: 'Peliin on piilotettu kahdeksan löytöä. Huonekoodilla on väliä, ja lakkia pidetään vapusta syyskuun loppuun.' },
+    { title: 'Olutpokka', body: 'Tallinnaan tai Haaparannalle pysähtynyt kilta saa olutpokan, joka kulkee mukana pelin loppuun. Pelkkä kunniamerkki.' },
+    { title: 'Löydöt', body: 'Peliin on piilotettu yhdeksän löytöä. Huonekoodilla on väliä, ja lakkia pidetään vapusta syyskuun loppuun.' },
     { title: 'Jos kaikki kiekot käännetty ennen kuin kukaan valmistuu', body: 'Ensimmäinen kotiin päässyt saa +80 op ja voittaa.' },
   ];
 }
@@ -133,6 +134,7 @@ export const T = {
   holdToConfirm: 'pidä 1s',
   chickenedOut: 'Et sä uskalla.',
   capIllegal: 'Lakkikausi on ohi. Pidät sitä silti.',
+  pokka: 'Olutpokka',
   chooseSquare: 'Valitse ruutu johon liikut',
   canMoveLess: 'Saat liikkua vähemmän kuin noppa näyttää.',
   fly: 'Lennä',
@@ -281,6 +283,14 @@ export function describeEvent(event, nameOf, unit) {
     case 'KANDI_REACHED': return `${who} on suorittanut Kandin!`;
     case 'EGG_FOUND':
       return `${who} löysi: ${EGGS[event.egg]?.title ?? event.egg} (${eggTier(event.egg)})`;
+    // The light game drinks sips; eight of those in ten minutes is no cause
+    // for a water break, so the whole nudge is a full-game thing.
+    case 'POKKA_GAINED':
+      return `${who} toi olutpokan ${event.at === 'tallinna' ? 'Tallinnasta' : 'Haaparannalta'}`;
+    case 'PACE_WARNING':
+      return unit === 'sip'
+        ? null
+        : `${who}: ${beers(event.drinks)} ${event.minutes} minuutissa. Vesilasi väliin?`;
     case 'TOKEN_MUUT_JUO': return `${who}: muut juo! (${event.affected.length})`;
     case 'TOKEN_DEFERRED': return `${who} jätti kiekon kääntämättä`;
     case 'PVP_ASSIGNED': return `${who} määräsi ${u.gen}: ${nameOf(event.targetId)}`;

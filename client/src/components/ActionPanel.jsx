@@ -18,7 +18,7 @@ const BAILS_BEFORE_MOCKING = 5;
  * stays on the button until you finally see a hold through, so it cannot be
  * missed - it is sitting on the one thing you are trying to press.
  */
-function HoldButton({ className, holdMs, onConfirm, children }) {
+function HoldButton({ className, holdMs, onConfirm, onMocked, children }) {
   const [holding, setHolding] = useState(false);
   const [mocked, setMocked] = useState(false);
   const timerRef = useRef(null);
@@ -46,7 +46,7 @@ function HoldButton({ className, holdMs, onConfirm, children }) {
     bailsRef.current += 1;
     if (bailsRef.current >= BAILS_BEFORE_MOCKING && !mocked) {
       setMocked(true);
-      rememberEgg('et_uskalla');
+      onMocked?.();
     }
   };
 
@@ -91,6 +91,7 @@ export default function ActionPanel({
       className="btn btn--drink"
       holdMs={DRINK_HOLD_MS}
       onConfirm={() => send('req_drink_cleared', {})}
+      onMocked={() => { rememberEgg('et_uskalla'); send('req_egg', { egg: 'et_uskalla' }); }}
     >
       <span className="btn__lead numeric">{owed}</span>
       <span>

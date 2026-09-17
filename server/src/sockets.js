@@ -21,6 +21,7 @@ const ACTIONS = {
   req_resolution_action: (p) => ({ type: 'RESOLVE', choice: p?.choice }),
   req_border_roll: () => ({ type: 'BORDER_ROLL' }),
   req_leader_override: (p) => ({ type: 'LEADER_OVERRIDE', op: p?.op, args: p?.args ?? {} }),
+  req_egg: (p) => ({ type: 'CLAIM_EGG', egg: p?.egg }),
 };
 
 /** Events worth their own channel, so a client can react without filtering. */
@@ -98,7 +99,9 @@ export function attachSockets(io, deps) {
         try {
           const result = await store.withRoom(roomCode, async (state) => {
             if (!state) throw new GameError('NO_ROOM', 'room no longer exists');
-            return applyAction(state, { ...build(payload), playerId }, deps);
+            // Stamped here because the reducer never reads a clock; the pace
+            // check is the only thing that looks at it.
+            return applyAction(state, { ...build(payload), playerId, at: Date.now() }, deps);
           });
 
           ack?.({ ok: true });

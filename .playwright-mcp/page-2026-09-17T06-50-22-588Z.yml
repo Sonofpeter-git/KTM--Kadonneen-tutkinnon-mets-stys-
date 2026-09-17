@@ -1,0 +1,67 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Aula" [level=1] [ref=e6]
+      - generic [ref=e7]: KELA
+      - text: Hakemus käsittelyssä
+    - paragraph [ref=e8]: Pelinjohtaja ei osallistu kiltana - sinä tuomaroit.
+    - list [ref=e9]:
+      - listitem [ref=e10]:
+        - button [disabled] [ref=e11]:
+          - generic [ref=e13]:
+            - strong [ref=e14]: Algo ry
+            - emphasis [ref=e15]: Jyväskylä · Perustettu 2020
+      - listitem [ref=e16]:
+        - button [disabled] [ref=e17]:
+          - generic [ref=e19]:
+            - strong [ref=e20]: Digit ry
+            - emphasis [ref=e21]: Turku · Perustettu 1999
+      - listitem [ref=e22]:
+        - button [disabled] [ref=e23]:
+          - generic [ref=e25]:
+            - strong [ref=e26]: Datateknologerna vid Åbo Akademi (DaTe)
+            - emphasis [ref=e27]: Åbo · Perustettu 1999
+      - listitem [ref=e28]:
+        - button [disabled] [ref=e29]:
+          - generic [ref=e31]:
+            - strong [ref=e32]: Tampereen TietoTeekkarikilta ry (TiTe)
+            - emphasis [ref=e33]: Tampere · Perustettu 1990
+      - listitem [ref=e34]:
+        - button [disabled] [ref=e35]:
+          - generic [ref=e37]:
+            - strong [ref=e38]: Tutti ry
+            - emphasis [ref=e39]: Vaasa · Perustettu 1989
+      - listitem [ref=e40]:
+        - button [disabled] [ref=e41]:
+          - generic [ref=e43]:
+            - strong [ref=e44]: Oulun Tietoteekkarit ry (OTiT)
+            - emphasis [ref=e45]: Oulu · Perustettu 1988
+      - listitem [ref=e46]:
+        - button [disabled] [ref=e47]:
+          - generic [ref=e49]:
+            - strong [ref=e50]: Tietokilta ry (TiK)
+            - emphasis [ref=e51]: Otaniemi · Perustettu 1986
+      - listitem [ref=e52]:
+        - button [disabled] [ref=e53]:
+          - generic [ref=e55]:
+            - strong [ref=e56]: Cluster ry
+            - emphasis [ref=e57]: Lappeenranta · Perustettu 1984
+    - list [ref=e58]:
+      - listitem [ref=e59]:
+        - text: Anna
+        - emphasis [ref=e60]: · Pelinjohtaja
+        - emphasis [ref=e61]: · sinä
+    - generic [ref=e62]:
+      - button "Vaihda huone" [ref=e63] [cursor=pointer]
+      - button "Säännöt" [ref=e64] [cursor=pointer]
+      - button "Arvo vapaat killat" [ref=e65] [cursor=pointer]
+      - generic [ref=e66]:
+        - emphasis [ref=e67]: Kiekkojen hinta
+        - button "Täysi (2 / 1)" [ref=e68] [cursor=pointer]
+        - button "Puolikas (1 / 0)" [ref=e69] [cursor=pointer]
+      - generic [ref=e70]:
+        - emphasis [ref=e71]: Juomayksikkö
+        - button "Olut" [ref=e72] [cursor=pointer]
+        - button "Hörppy (bussiversio)" [ref=e73] [cursor=pointer]
+      - button "Aloita peli" [disabled] [ref=e74]
+      - paragraph [ref=e75]: Vähintään kaksi kiltaa on valittava

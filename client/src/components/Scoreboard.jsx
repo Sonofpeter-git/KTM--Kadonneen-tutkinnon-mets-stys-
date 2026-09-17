@@ -53,6 +53,7 @@ export default function Scoreboard({ state, guildsById, activeId, boardById }) {
                 <strong>
                   {guild?.name ?? p.name}
                   {soberWinner === p.id && <span title={EGGS.raitis_voittaja.blurb}>*</span>}
+                  {p.pokka && <span className="chip chip--pokka">{T.pokka}</span>}
                 </strong>
                 <em>
                   {boardById?.get(p.nodeId)?.name || guild?.city || '-'}
@@ -92,7 +93,7 @@ export default function Scoreboard({ state, guildsById, activeId, boardById }) {
 
 /** Discs a team is holding, shown on the endgame card. */
 export function Transcript({ player }) {
-  if (!player?.tokens?.length) return null;
+  if (!player?.tokens?.length && !player?.pokka) return null;
   return (
     <ul className="transcript">
       {player.tokens.map((t, i) => (
@@ -100,6 +101,7 @@ export function Transcript({ player }) {
           {TOKEN_LABEL[t.kind] ?? t.kind}
         </li>
       ))}
+      {player.pokka && <li className="chip chip--pokka">{T.pokka}</li>}
     </ul>
   );
 }

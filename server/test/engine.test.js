@@ -803,6 +803,88 @@ test('egg: the sober winner has to have drunk less than every rival, not just on
   assert.deepEqual(eggsIn(comeHome(tied).events), [], 'a tie with a rival is not sober');
 });
 
+test('egg: beers still owed at the end count against the sober winner', () => {
+  const state = startedGame();
+  player(state, 'p1').op = 320;
+  player(state, 'p1').drinksTaken = 2;
+  player(state, 'p1').drinksOwed = 3;
+  player(state, 'p2').drinksTaken = 4;
+  assert.deepEqual(eggsIn(comeHome(state).events), [], '2 drunk + 3 owed is not less than 4');
+});
+
+test('egg: clients can claim only their own eggs, once, and the cap goes to its wearer', () => {
+  let state = startedGame();
+  throwsCode(() => act(state, { type: 'CLAIM_EGG', playerId: 'p1', egg: 'tasan_300' }), 'BAD_EGG');
+  throwsCode(() => act(state, { type: 'CLAIM_EGG', playerId: 'p1', egg: 'lakkikausi' }), 'BAD_EGG');
+
+  const first = act(state, { type: 'CLAIM_EGG', playerId: 'p1', egg: 'huonekoodi' });
+  assert.deepEqual(eggsIn(first.events), ['huonekoodi']);
+  assert.deepEqual(eggsIn(act(first.state, { type: 'CLAIM_EGG', playerId: 'p2', egg: 'huonekoodi' }).events), []);
+
+  state = first.state;
+  player(state, 'p2').tokens = [{ kind: 'teekkarilakki', op: 0, drinks: 1 }];
+  const cap = act(state, { type: 'CLAIM_EGG', playerId: 'p1', egg: 'lakkikausi' });
+  assert.deepEqual(cap.state.eggsFound.at(-1), { egg: 'lakkikausi', playerId: 'p2' });
+});
+
+/** p1 rolls a 4, which hands it one travel beer, after `setup` shapes its history. */
+function travelBeer(setup, at) {
+  const state = forceRoll(startedGame(), 4, 4);
+  setup(player(state, 'p1'));
+  return act(state, { type: 'ROLL', playerId: 'p1', at });
+}
+
+test('egg: seven drinks piled on one team between two of its turns, and not six', () => {
+  assert.deepEqual(eggsIn(travelBeer((p) => { p.roundLoad = 5; }).events), []);
+  const piled = travelBeer((p) => { p.roundLoad = 6; });
+  assert.deepEqual(eggsIn(piled.events), ['kaikki_paalle']);
+  assert.equal(player(piled.state, 'p1').roundLoad, 7);
+});
+
+test('egg: the pile starts over when the team\'s turn comes round, even via an override', () => {
+  let state = startedGame();
+  player(state, 'p1').roundLoad = 6;
+  const skip = { type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SKIP_TURN' };
+  state = act(state, skip).state;
+  assert.equal(player(state, 'p1').roundLoad, 6, 'still p2\'s turn');
+  state = act(state, skip).state;
+  assert.equal(player(state, 'p1').roundLoad, 0);
+});
+
+test('pace: a water break at eight handed out inside ten minutes, once per window', () => {
+  const MIN = 60 * 1000;
+  const warnings = ({ events }) => events.filter((e) => e.type === 'PACE_WARNING').map((e) => e.drinks);
+
+  assert.deepEqual(warnings(travelBeer((p) => { p.recentDrinks = [{ at: 0, n: 7 }]; }, 9 * MIN)), [8]);
+  assert.deepEqual(warnings(travelBeer((p) => { p.recentDrinks = [{ at: 0, n: 7 }]; }, 10 * MIN)), [], 'aged out');
+  assert.deepEqual(warnings(travelBeer((p) => { p.recentDrinks = [{ at: 0, n: 6 }]; }, MIN)), [], 'seven is fine');
+  assert.deepEqual(warnings(travelBeer((p) => {
+    p.recentDrinks = [{ at: 4 * MIN, n: 7 }];
+    p.paceWarnedAt = 2 * MIN;
+  }, 5 * MIN)), [], 'already warned this window');
+  assert.deepEqual(warnings(travelBeer((p) => { p.recentDrinks = [{ at: 0, n: 7 }]; })), [], 'no clock, no check');
+});
+
+test('pokka: landing in Tallinn or at the border brings one home, kept for good', () => {
+  const pokkas = ({ events }) => events.filter((e) => e.type === 'POKKA_GAINED').map((e) => e.at);
+  const landOn = (square, setup = () => {}) => {
+    const state = forceRoll(startedGame(), 4, 1);
+    const p = player(state, 'p1');
+    p.nodeId = board.node(square).edges.find((e) => e.type !== 'flight').target;
+    setup(p);
+    const rolled = act(state, { type: 'ROLL', playerId: 'p1' }).state;
+    return act(rolled, { type: 'MOVE', playerId: 'p1', targetId: square });
+  };
+
+  const tallinn = landOn('tallinna');
+  assert.deepEqual(pokkas(tallinn), ['tallinna']);
+  assert.equal(player(tallinn.state, 'p1').pokka, true);
+
+  assert.deepEqual(pokkas(landOn('haaparanta')), ['haaparanta']);
+  assert.deepEqual(pokkas(landOn('haaparanta', (p) => { p.pokka = true; })), [], 'one crate is enough');
+  assert.deepEqual(pokkas(landOn('tampere')), []);
+});
+
 test('egg: a rival finishing one disc short of 300', () => {
   const state = startedGame();
   player(state, 'p1').op = 320;

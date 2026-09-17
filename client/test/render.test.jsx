@@ -20,6 +20,7 @@ import EggsPanel from '../src/components/EggsPanel.jsx';
 import App from '../src/App.jsx';
 import { readFileSync } from 'node:fs';
 import { EGGS, EGG_IDS, TIERS, isCapSeason } from '../src/lib/eggs.js';
+import { describeEvent } from '../src/lib/strings.js';
 import { roomTheme } from '../src/lib/roomThemes.js';
 
 /*
@@ -564,7 +565,7 @@ test('every egg id the server can emit exists in the client registry', () => {
 });
 
 test('every egg has a title, a blurb, a real tier and a known loudness', () => {
-  assert.equal(EGG_IDS.length, 8);
+  assert.equal(EGG_IDS.length, 9);
   for (const [id, egg] of Object.entries(EGGS)) {
     assert.ok(egg.title && egg.blurb, `${id} needs wording`);
     assert.ok(TIERS[egg.tier], `${id} has an unknown tier`);
@@ -634,7 +635,7 @@ test('the collection names what was found and keeps the rest secret', () => {
   assert.match(html, /tänään/, 'tonight\'s finds are marked');
   assert.doesNotMatch(html, /Kolmoisosuma/, 'an unfound egg is not named');
   assert.match(html, /Tohtori/, 'but its tier shows, so there is something to hunt');
-  assert.match(html, /\/ 8 löydetty/);
+  assert.match(html, /\/ 9 löydetty/);
 });
 
 test('a team holding the cap wears it on its pawn', () => {
@@ -669,4 +670,36 @@ test('room codes pick their theme regardless of case, and most pick none', () =>
   assert.equal(roomTheme('wapp'), 'wappu');
   assert.equal(roomTheme('TITE'), '');
   assert.equal(roomTheme(undefined), '');
+});
+
+test('the water-break nudge reads in beers and stays silent in the sip game', () => {
+  const event = { type: 'PACE_WARNING', playerId: 'a', drinks: 8, minutes: 10 };
+  const nameOf = () => 'Algo ry';
+  assert.equal(describeEvent(event, nameOf, 'beer'), 'Algo ry: 8 olutta 10 minuutissa. Vesilasi väliin?');
+  assert.equal(describeEvent(event, nameOf, 'sip'), null);
+});
+
+test('an olutpokka shows on the pawn and in the transcript, even with no discs', () => {
+  const s = playing();
+  team(s, 'b').pokka = true;
+  const v = view(s);
+
+  const scoreboard = render(
+    <Scoreboard state={v} guildsById={guildsById} activeId="a" boardById={boardById} />,
+  );
+  assert.equal(scoreboard.match(/chip--pokka/g)?.length, 1, 'only the team that went');
+
+  const pawns = render(
+    <Board
+      board={board.raw}
+      tokens={v.board.tokens}
+      players={v.players.filter((p) => p.guildId)}
+      guildsById={guildsById}
+      validDestinations={null}
+      activeNodeId={null}
+      interactive={false}
+      onPick={() => {}}
+    />,
+  );
+  assert.equal(pawns.match(/pawn__pokka/g)?.length, 1);
 });
