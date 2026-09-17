@@ -14,6 +14,7 @@ import Scoreboard from '../src/components/Scoreboard.jsx';
 import EventLog from '../src/components/EventLog.jsx';
 import AdminSidebar from '../src/components/AdminSidebar.jsx';
 import Finished from '../src/components/Finished.jsx';
+import RulesPanel from '../src/components/RulesPanel.jsx';
 import App from '../src/App.jsx';
 
 /*
@@ -44,8 +45,14 @@ function lobbyState() {
 }
 
 /** A live game with `a` guaranteed to be the active team. */
-function playing() {
-  let s = applyAction(lobbyState(), { type: 'START_GAME', playerId: HOST }, deps).state;
+function playing(drinkUnit) {
+  let s = lobbyState();
+  if (drinkUnit) {
+    s = applyAction(s, {
+      type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_DRINK_UNIT', args: { unit: drinkUnit },
+    }, deps).state;
+  }
+  s = applyAction(s, { type: 'START_GAME', playerId: HOST }, deps).state;
   s = applyAction(s, {
     type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_TURN_ORDER',
     args: { turnOrder: ['a', 'b'] },
@@ -330,6 +337,74 @@ test('the log survives an event type it has no wording for', () => {
     />,
   );
   assert.match(html, /Ei vielä tapahtumia/, 'unknown events are dropped, not crashed on');
+});
+
+/* ----------------------------------------------------------- the bus version */
+
+/*
+ * The light game is the full game counted in sips. Nothing in the engine
+ * changes, so what these guard is the wording - and specifically the Finnish,
+ * which is where a naive swap breaks: hörppy drops a p in the genitive and
+ * again in the plural.
+ */
+
+test('the bus version counts in sips wherever a beer was named', () => {
+  const s = playing('sip');
+  team(s, 'a').drinksOwed = 2;
+  const html = panel(view(s));
+
+  assert.match(html, /hörppyä juomatta/);
+  assert.doesNotMatch(html, /olut/, 'nothing is left counting beers');
+});
+
+test('one sip is singular, the way one beer was', () => {
+  const s = playing('sip');
+  team(s, 'a').drinksOwed = 1;
+
+  assert.match(panel(view(s)), /hörppy juomatta/, 'nominative, not partitive');
+});
+
+test('the log declines the unit instead of concatenating it', () => {
+  const s = playing('sip');
+  const html = render(
+    <EventLog
+      feed={[
+        { type: 'PVP_ASSIGNED', playerId: 'a', targetId: 'b' },
+        { type: 'TRAVEL_BEER', playerId: 'a' },
+        { type: 'BORDER_BLOCKED', playerId: 'a' },
+      ]}
+      state={view(s)}
+      guildsById={guildsById}
+    />,
+  );
+
+  assert.match(html, /määräsi hörpyn/, 'genitive drops a p');
+  assert.match(html, /juo matkahörpyn/);
+  assert.match(html, /juo hörpyn/);
+});
+
+test('the scoreboard tallies sips', () => {
+  const s = playing('sip');
+  team(s, 'a').drinksTaken = 4;
+
+  const html = render(
+    <Scoreboard state={view(s)} guildsById={guildsById} activeId="a" boardById={boardById} />,
+  );
+  assert.match(html, /hörppyä juotu yhteensä/);
+});
+
+test('the rules drawer is rewritten in whichever unit is in play', () => {
+  const sips = render(<RulesPanel unit="sip" onClose={() => {}} />);
+  assert.match(sips, /Matkahörppy/);
+  assert.match(sips, /sen hörpyt juodaan uudelleen/, 'plural drops a p too');
+  assert.doesNotMatch(sips, /shottia/, 'the light game pours no spirits');
+
+  // The full game must read exactly as it always did - this is the guard on
+  // the light version quietly rewording the real one.
+  const beers = render(<RulesPanel unit="beer" onClose={() => {}} />);
+  assert.match(beers, /Matkaolut/);
+  assert.match(beers, /maksaa 3 shottia/);
+  assert.match(beers, /sen oluet juodaan uudelleen/);
 });
 
 /* ----------------------------------------------------------------- admin */

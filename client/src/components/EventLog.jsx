@@ -10,7 +10,11 @@ export default function EventLog({ feed, state, guildsById }) {
   };
 
   const lines = feed
-    .map((event, i) => ({ key: i, text: describeEvent(event, nameOf), type: event.type }))
+    .map((event, i) => ({
+      key: i,
+      text: describeEvent(event, nameOf, state?.drinkUnit),
+      type: event.type,
+    }))
     .filter((line) => line.text)
     .slice(-25)
     .reverse();

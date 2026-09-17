@@ -1,7 +1,7 @@
-import { T, RULES } from '../lib/strings.js';
+import { T, rules } from '../lib/strings.js';
 
 /** Read-only rules drawer, open to anyone - not just the leader. */
-export default function RulesPanel({ onClose }) {
+export default function RulesPanel({ unit, onClose }) {
   return (
     <aside className="rules">
       <header className="rules__head">
@@ -10,7 +10,7 @@ export default function RulesPanel({ onClose }) {
       </header>
 
       <dl className="rules__list">
-        {RULES.map(({ title, body }) => (
+        {rules(unit).map(({ title, body }) => (
           <div key={title}>
             <dt>{title}</dt>
             <dd>{body}</dd>

@@ -42,6 +42,18 @@ export const OPEN_COST_MODES = {
 };
 
 /**
+ * The unit everyone in the room is counting in, set once from the lobby (see
+ * engine.js's SET_DRINK_UNIT override).
+ *
+ * Nothing in the engine reads it. Every cost here is a plain count, so the
+ * bus/light game is this same game played in smaller units - a sip where the
+ * full game drinks a beer - and the entire difference is wording. It lives on
+ * the room rather than on each device because a room half in sips and half in
+ * beers would be two different games at one table.
+ */
+export const DRINK_UNITS = ['beer', 'sip'];
+
+/**
  * 'per-run'  - one beer per sea crossing, however many squares it spans.
  *              Matches "tulee heidan juoda yksi olut aloittaakseen matkan".
  * 'per-edge' - one beer per water square entered. Harsher; here if you want it.

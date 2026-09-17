@@ -37,13 +37,16 @@ export class GameError extends Error {
 
 /* ------------------------------------------------------------ construction */
 
-export function createRoom({ code, seed = code, createdAt = 0, costMode = 'full' }) {
+export function createRoom({
+  code, seed = code, createdAt = 0, costMode = 'full', drinkUnit = 'beer',
+}) {
   return {
     code,
     status: 'LOBBY',
     rng: seedFrom(String(seed)),
     createdAt,
     costMode,
+    drinkUnit,
     players: [],
     turnOrder: [],
     turnState: null,
@@ -630,6 +633,17 @@ function leaderOverride(state, { playerId, op, args = {} }, deps) {
       }
       state.costMode = args.mode;
       return [{ type: 'OVERRIDE_COST_MODE', mode: args.mode }];
+    }
+
+    case 'SET_DRINK_UNIT': {
+      // Lobby-only for the same reason as the cost mode: the unit the whole
+      // table is counting in should not move once anyone has started counting.
+      requireStatus(state, 'LOBBY');
+      if (!T.DRINK_UNITS.includes(args.unit)) {
+        throw new GameError('BAD_DRINK_UNIT', 'unit must be "beer" or "sip"');
+      }
+      state.drinkUnit = args.unit;
+      return [{ type: 'OVERRIDE_DRINK_UNIT', unit: args.unit }];
     }
 
     case 'RANDOMIZE_GUILDS': {

@@ -249,7 +249,7 @@ export default function App() {
         />
       )}
 
-      {rulesOpen && <RulesPanel onClose={() => setRulesOpen(false)} />}
+      {rulesOpen && <RulesPanel unit={state.drinkUnit} onClose={() => setRulesOpen(false)} />}
 
       {error && <Toast message={error} onDismiss={dismissError} />}
     </main>

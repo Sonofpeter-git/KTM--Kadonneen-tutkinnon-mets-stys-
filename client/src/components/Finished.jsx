@@ -1,10 +1,11 @@
-import { T } from '../lib/strings.js';
+import { T, unitLabels } from '../lib/strings.js';
 import { Transcript } from './Scoreboard.jsx';
 import { guildName } from './ActionPanel.jsx';
 
 /** The final card. First place is the graduate; everyone else is ranked on OP. */
 export default function Finished({ state, guildsById }) {
   const winner = state.players.find((p) => p.id === state.winnerId);
+  const L = unitLabels(state.drinkUnit);
 
   return (
     <div className="finished">
@@ -15,7 +16,7 @@ export default function Finished({ state, guildsById }) {
       <p className="finished__op numeric">{winner?.op} {T.credits}</p>
 
       <p className="finished__beers">
-        <span className="numeric">{state.drinksTakenTotal ?? 0}</span> {T.drunkTotal}
+        <span className="numeric">{state.drinksTakenTotal ?? 0}</span> {L.drunkTotal}
       </p>
 
       <h2 className="finished__heading">{T.finalStandings}</h2>
@@ -31,7 +32,7 @@ export default function Finished({ state, guildsById }) {
               </span>
               <span className="finished__score numeric">
                 {s.op}
-                <em>{player?.drinksTaken ?? 0} {T.drinks}</em>
+                <em>{player?.drinksTaken ?? 0} {L.drinks}</em>
               </span>
             </li>
           );

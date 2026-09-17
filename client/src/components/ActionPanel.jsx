@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
-  T, beers, PHASE_LABEL, TOKEN_LABEL, openNowCostLabel, waitToOpenCostLabel, openDiscHereCostLabel,
+  T, drinkCount, unitLabels, PHASE_LABEL, TOKEN_LABEL,
+  openNowCostLabel, waitToOpenCostLabel, openDiscHereCostLabel,
 } from '../lib/strings.js';
 
 const DRINK_HOLD_MS = 1000;
@@ -55,6 +56,8 @@ export default function ActionPanel({
 
   const phase = state.turnState?.phase;
   const owed = me.drinksOwed;
+  const unit = state.drinkUnit;
+  const L = unitLabels(unit);
 
   // Drinks can arrive from another team's "Muut juo!" while you are nowhere
   // near your own turn, so this is always available.
@@ -67,7 +70,7 @@ export default function ActionPanel({
       <span className="btn__lead numeric">{owed}</span>
       <span>
         <strong>{T.drinksDone}</strong>
-        <em>{owed === 1 ? T.drinksOwedOne : T.drinksOwedMany} · {T.holdToConfirm}</em>
+        <em>{owed === 1 ? L.drinksOwedOne : L.drinksOwedMany} · {T.holdToConfirm}</em>
       </span>
     </HoldButton>
   );
@@ -133,6 +136,7 @@ export default function ActionPanel({
           guildsById={guildsById}
           boardById={boardById}
           costMode={state.costMode}
+          unit={unit}
           send={send}
         />
       )}
@@ -147,6 +151,7 @@ function RollingActions({ state, me, boardById, send }) {
   const disc = state.board.tokens[me.nodeId];
   const canOpen = disc?.status === 'HIDDEN';
   const flights = (here?.edges ?? []).filter((e) => e.type === 'flight');
+  const unit = state.drinkUnit;
 
   return (
     <>
@@ -158,7 +163,7 @@ function RollingActions({ state, me, boardById, send }) {
       {canOpen && (
         <button className="btn" onClick={() => send('req_open_token', {})}>
           {T.openDiscHere}
-          <em>{openDiscHereCostLabel(state.costMode)}</em>
+          <em>{openDiscHereCostLabel(state.costMode, unit)}</em>
         </button>
       )}
 
@@ -169,14 +174,14 @@ function RollingActions({ state, me, boardById, send }) {
           onClick={() => send('req_use_flight', { targetId: f.target })}
         >
           {T.fly}: {boardById?.get(f.target)?.name ?? f.target}
-          <em>{T.flyCost}</em>
+          <em>{unitLabels(unit).flyCost}</em>
         </button>
       ))}
     </>
   );
 }
 
-function Resolution({ pending, players, guildsById, boardById, costMode, send }) {
+function Resolution({ pending, players, guildsById, boardById, costMode, unit, send }) {
   if (!pending) return null;
 
   if (pending.kind === 'TOKEN') {
@@ -190,14 +195,14 @@ function Resolution({ pending, players, guildsById, boardById, costMode, send })
           onClick={() => send('req_resolution_action', { choice: { action: 'OPEN_NOW' } })}
         >
           {T.openNow}
-          <em>{openNowCostLabel(costMode)}</em>
+          <em>{openNowCostLabel(costMode, unit)}</em>
         </button>
         <button
           className="btn"
           onClick={() => send('req_resolution_action', { choice: { action: 'WAIT' } })}
         >
           {T.waitToOpen}
-          <em>{waitToOpenCostLabel(costMode)}</em>
+          <em>{waitToOpenCostLabel(costMode, unit)}</em>
         </button>
       </>
     );
@@ -216,8 +221,8 @@ function Resolution({ pending, players, guildsById, boardById, costMode, send })
               choice: { action: 'ASSIGN', targetId: id },
             })}
           >
-            {T.assignDrink}: {guildName(guildsById, victim)}
-            <em>{beers(1)}</em>
+            {unitLabels(unit).assignDrink}: {guildName(guildsById, victim)}
+            <em>{drinkCount(1, unit)}</em>
           </button>
         );
       })}

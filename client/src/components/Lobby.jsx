@@ -141,6 +141,25 @@ export default function Lobby({ state, guilds, me, isLeader, send, onLeave }) {
               {T.openCostModeHalf}
             </button>
           </div>
+
+          {/* Independent of the cost mode above: that one changes how many
+              units a disc costs, this one changes how big a unit is. */}
+          <div className="lobby__costmode">
+            <em>{T.drinkUnit}</em>
+            <button
+              className={state.drinkUnit === 'sip' ? 'btn btn--quiet' : 'btn btn--primary'}
+              onClick={() => send('req_leader_override', { op: 'SET_DRINK_UNIT', args: { unit: 'beer' } })}
+            >
+              {T.drinkUnitBeer}
+            </button>
+            <button
+              className={state.drinkUnit === 'sip' ? 'btn btn--primary' : 'btn btn--quiet'}
+              onClick={() => send('req_leader_override', { op: 'SET_DRINK_UNIT', args: { unit: 'sip' } })}
+            >
+              {T.drinkUnitSip}
+            </button>
+          </div>
+          {state.drinkUnit === 'sip' && <p className="lobby__hint">{T.drinkUnitHint}</p>}
           <button
             className="btn btn--primary"
             disabled={!ready}
@@ -158,7 +177,7 @@ export default function Lobby({ state, guilds, me, isLeader, send, onLeave }) {
         </div>
       )}
 
-      {rulesOpen && <RulesPanel onClose={() => setRulesOpen(false)} />}
+      {rulesOpen && <RulesPanel unit={state.drinkUnit} onClose={() => setRulesOpen(false)} />}
     </div>
   );
 }

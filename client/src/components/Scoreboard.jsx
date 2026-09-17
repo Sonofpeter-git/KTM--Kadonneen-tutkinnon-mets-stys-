@@ -1,4 +1,4 @@
-import { T, TOKEN_LABEL } from '../lib/strings.js';
+import { T, TOKEN_LABEL, unitLabels } from '../lib/strings.js';
 
 const GOAL = 300;
 
@@ -24,7 +24,7 @@ export default function Scoreboard({ state, guildsById, activeId, boardById }) {
           team row. */}
       <p className="scoreboard__beers">
         <span className="scoreboard__beerCount numeric">{state.drinksTakenTotal ?? 0}</span>
-        <em>{T.drunkTotal}</em>
+        <em>{unitLabels(state.drinkUnit).drunkTotal}</em>
       </p>
 
       <ol className="scoreboard__list">

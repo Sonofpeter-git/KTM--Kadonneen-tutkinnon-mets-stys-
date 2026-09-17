@@ -440,6 +440,44 @@ test('leader override: the cost mode can only be set from the lobby', () => {
   }), 'WRONG_STATUS');
 });
 
+test('leader override: the drink unit is lobby-only and validated', () => {
+  let state = lobby(['p1', 'p2'], ['digit', 'tik']);
+  assert.equal(state.drinkUnit, 'beer', 'the full game is the default');
+
+  throwsCode(() => act(state, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_DRINK_UNIT', args: { unit: 'kalja' },
+  }), 'BAD_DRINK_UNIT');
+
+  state = act(state, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_DRINK_UNIT', args: { unit: 'sip' },
+  }).state;
+  assert.equal(state.drinkUnit, 'sip');
+
+  throwsCode(() => act(startedGame(), {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_DRINK_UNIT', args: { unit: 'sip' },
+  }), 'WRONG_STATUS');
+});
+
+test('the drink unit changes no cost the engine charges', () => {
+  // The light game is the same game in a smaller unit. If this ever fails,
+  // something started reading state.drinkUnit as though it were a rule.
+  const inBeers = arriveAt(startedGame(), 'tampere', 'op60');
+  let sips = lobby(['p1', 'p2'], ['digit', 'tik']);
+  sips = act(sips, {
+    type: 'LEADER_OVERRIDE', playerId: HOST, op: 'SET_DRINK_UNIT', args: { unit: 'sip' },
+  }).state;
+  sips = act(sips, { type: 'START_GAME', playerId: HOST }).state;
+  sips.turnState.activeIndex = 0;
+  sips = arriveAt(sips, 'tampere', 'op60');
+
+  const open = (s) => act(s, {
+    type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' },
+  }).state;
+
+  assert.equal(player(open(sips), 'p1').drinksOwed, player(open(inBeers), 'p1').drinksOwed);
+  assert.equal(player(open(sips), 'p1').op, player(open(inBeers), 'p1').op);
+});
+
 test('disc: the Teekkarilakki upgrades the die to a d6 for good', () => {
   let state = arriveAt(startedGame(), 'tampere', 'teekkarilakki');
   state = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } }).state;
