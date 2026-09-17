@@ -1,4 +1,5 @@
 import { T, TOKEN_LABEL } from '../lib/strings.js';
+import { EGGS, eggTier } from '../lib/eggs.js';
 
 /** A brief flash over the board for the two card moments worth shouting about. */
 export default function TokenFlash({ flash, guildsById, viewerGuildId, onDismiss }) {
@@ -21,6 +22,23 @@ export default function TokenFlash({ flash, guildsById, viewerGuildId, onDismiss
   }
 
   const showTeam = flash.guildId !== viewerGuildId;
+
+  // Eggs get the team colour and their tier underneath, so the size of the
+  // find reads at a glance from across a room.
+  if (flash.kind === 'EGG') {
+    const egg = EGGS[flash.egg];
+    return (
+      <button
+        className="stage__overlay flash-overlay flash-overlay--egg"
+        style={{ '--team': guildsById[flash.guildId]?.color }}
+        onClick={onDismiss}
+      >
+        <p className="flash-overlay__kicker">{eggTier(flash.egg)}</p>
+        <p className="flash-overlay__shout">{egg?.title}</p>
+        <p className="flash-overlay__teamname">{egg?.blurb}</p>
+      </button>
+    );
+  }
 
   if (flash.kind === 'KANDI') {
     return (

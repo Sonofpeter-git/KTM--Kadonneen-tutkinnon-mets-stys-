@@ -13,6 +13,7 @@ wiring works and to tell the cues apart, nothing more:
 | `foghorn.wav` | Teekkariristeily | two low blasts |
 | `jackpot.wav` | the 80op disc | fast ascending arpeggio |
 | `chime.wav` | Teekkarilakki | two bell notes |
+| `discovery.wav` | any easter egg | sparkle run into a ta-da chord |
 
 Replace them with real CC0 samples (freesound.org or Pixabay), short, mono, and the table
 entry can point at any format `decodeAudioData` takes:

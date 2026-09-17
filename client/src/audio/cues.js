@@ -67,6 +67,13 @@ export const CUES = {
   /** The cap: d4 becomes d6 for the rest of the night. */
   TOKEN_LAKKI: { src: 'chime.wav', audience: ACTOR, priority: 35 },
 
+  /*
+   * An easter egg. Outranks every disc cue, because the find that lands in the
+   * same batch as its disc - the third 80op, say - is the one worth hearing.
+   * Actor only for now: EVERYONE reads a room-speaker flag nothing sets yet.
+   */
+  EGG_FOUND: { src: 'discovery.wav', audience: ACTOR, priority: 60 },
+
   // Later, and this is the whole diff:
   // TOKEN_MUUT_JUO: { src: 'groan.mp3',     audience: TARGETS,  priority: 40 },
   // BORDER_BLOCKED: { src: 'buzzer.mp3',    audience: ACTOR,    priority: 15 },

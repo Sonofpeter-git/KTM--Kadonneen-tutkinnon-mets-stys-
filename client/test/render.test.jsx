@@ -15,7 +15,12 @@ import EventLog from '../src/components/EventLog.jsx';
 import AdminSidebar from '../src/components/AdminSidebar.jsx';
 import Finished from '../src/components/Finished.jsx';
 import RulesPanel from '../src/components/RulesPanel.jsx';
+import TokenFlash from '../src/components/TokenFlash.jsx';
+import EggsPanel from '../src/components/EggsPanel.jsx';
 import App from '../src/App.jsx';
+import { readFileSync } from 'node:fs';
+import { EGGS, EGG_IDS, TIERS, isCapSeason } from '../src/lib/eggs.js';
+import { roomTheme } from '../src/lib/roomThemes.js';
 
 /*
  * The fixtures come out of the real engine and through the real sanitiser, so
@@ -524,4 +529,144 @@ test('only reachable squares become clickable, and only on your move', () => {
     Object.keys(destinations).length,
     'exactly the squares the server offered are highlighted',
   );
+});
+
+/* ----------------------------------------------------------- easter eggs */
+
+/*
+ * The requirement for eggs is that nobody misses one, so these check the
+ * places a find is supposed to surface - the flash, the log, the scoreboard,
+ * the endgame card and the collection - rather than just that it was detected.
+ */
+
+/** Walk `a` home to Turku with every disc already turned, ending the game. */
+function finishedGame(setup) {
+  let s = playing();
+  setup(s);
+  team(s, 'a').nodeId = board.node('turku').edges.find((e) => e.type === 'land').target;
+  for (const cell of Object.values(s.board.tokens)) cell.status = 'REVEALED';
+  s = applyAction(s, { type: 'ROLL', playerId: 'a' }, deps).state;
+  s = applyAction(s, { type: 'MOVE', playerId: 'a', targetId: 'turku' }, deps).state;
+  assert.equal(s.status, 'FINISHED', 'fixture should end the game');
+  return s;
+}
+
+test('every egg id the server can emit exists in the client registry', () => {
+  // The two halves share these ids only as strings. A typo on either side
+  // would not crash anything - the flash would just quietly never appear.
+  const source = ['../../server/src/game/engine.js', '../../server/src/game/tokens.js']
+    .map((f) => readFileSync(new URL(f, import.meta.url), 'utf8'))
+    .join('\n');
+  const emitted = [...source.matchAll(/egg: '(\w+)'/g)].map((m) => m[1]);
+
+  assert.ok(emitted.length >= 5, 'expected to find the server-side eggs');
+  for (const id of emitted) assert.ok(EGGS[id], `server emits "${id}" but the client has no such egg`);
+});
+
+test('every egg has a title, a blurb, a real tier and a known loudness', () => {
+  assert.equal(EGG_IDS.length, 8);
+  for (const [id, egg] of Object.entries(EGGS)) {
+    assert.ok(egg.title && egg.blurb, `${id} needs wording`);
+    assert.ok(TIERS[egg.tier], `${id} has an unknown tier`);
+    assert.ok(['ambient', 'toast', 'flash', 'endgame'].includes(egg.loud), `${id} has an unknown loudness`);
+  }
+});
+
+test('the endgame card lists every egg found tonight', () => {
+  const s = finishedGame((g) => {
+    team(g, 'a').op = 300;
+    team(g, 'b').op = 280;
+  });
+  const html = render(<Finished state={view(s)} guildsById={guildsById} />);
+
+  assert.match(html, /Yön löydöt/);
+  assert.match(html, /Tasan 300/);
+  assert.match(html, /Yksi kiekko vajaa/, 'including the one credited to the losing team');
+});
+
+test('an endgame with no finds says so, and hints where to look', () => {
+  const s = finishedGame((g) => { team(g, 'a').op = 320; });
+  const html = render(<Finished state={view(s)} guildsById={guildsById} />);
+
+  assert.match(html, /Huonekoodilla on väliä/);
+});
+
+test('an egg flash names the egg and its tier', () => {
+  const html = render(
+    <TokenFlash
+      flash={{ kind: 'EGG', egg: 'kolmoisosuma', guildId: 'digit', ms: 6000 }}
+      guildsById={guildsById}
+      viewerGuildId="tik"
+      onDismiss={() => {}}
+    />,
+  );
+  assert.match(html, /Kolmoisosuma/);
+  assert.match(html, /Tohtori/);
+});
+
+test('a find in the log is named, tiered and styled apart from ordinary lines', () => {
+  const html = render(
+    <EventLog
+      feed={[{ type: 'EGG_FOUND', playerId: 'a', egg: 'rajavartija' }]}
+      state={view(playing())}
+      guildsById={guildsById}
+    />,
+  );
+  assert.match(html, /löysi: Rajavartija muistaa sinut \(Kandi\)/);
+  assert.match(html, /log__line--egg/);
+});
+
+test('a sober winner keeps an asterisk on the scoreboard', () => {
+  const s = playing();
+  s.eggsFound = [{ egg: 'raitis_voittaja', playerId: 'a' }];
+  const html = render(
+    <Scoreboard state={view(s)} guildsById={guildsById} activeId="a" boardById={boardById} />,
+  );
+  assert.match(html, /Digit ry<span[^>]*>\*<\/span>/);
+  assert.equal(html.match(/>\*<\/span>/g).length, 1, 'only on the winner');
+});
+
+test('the collection names what was found and keeps the rest secret', () => {
+  const html = render(
+    <EggsPanel found={[{ egg: 'tasan_300', playerId: 'a' }]} onClose={() => {}} />,
+  );
+  assert.match(html, /Tasan 300/);
+  assert.match(html, /tänään/, 'tonight\'s finds are marked');
+  assert.doesNotMatch(html, /Kolmoisosuma/, 'an unfound egg is not named');
+  assert.match(html, /Tohtori/, 'but its tier shows, so there is something to hunt');
+  assert.match(html, /\/ 8 löydetty/);
+});
+
+test('a team holding the cap wears it on its pawn', () => {
+  const s = playing();
+  team(s, 'a').tokens = [{ kind: 'teekkarilakki', op: 0, drinks: 1 }];
+  const v = view(s);
+  const html = render(
+    <Board
+      board={board.raw}
+      tokens={v.board.tokens}
+      players={v.players.filter((p) => p.guildId)}
+      guildsById={guildsById}
+      validDestinations={null}
+      activeNodeId={null}
+      interactive={false}
+      onPick={() => {}}
+    />,
+  );
+  assert.equal(html.match(/pawn__cap/g)?.length, 1, 'only the team with the cap');
+});
+
+test('lakkikausi runs from Wappu to the end of September', () => {
+  const on = (month, day) => isCapSeason(new Date(2026, month - 1, day));
+  assert.equal(on(4, 30), false);
+  assert.equal(on(5, 1), true);
+  assert.equal(on(9, 30), true);
+  assert.equal(on(10, 1), false);
+});
+
+test('room codes pick their theme regardless of case, and most pick none', () => {
+  assert.equal(roomTheme('KELA'), 'kela');
+  assert.equal(roomTheme('wapp'), 'wappu');
+  assert.equal(roomTheme('TITE'), '');
+  assert.equal(roomTheme(undefined), '');
 });

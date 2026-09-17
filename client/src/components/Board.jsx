@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { TOKEN_LABEL } from '../lib/strings.js';
+import { T, TOKEN_LABEL } from '../lib/strings.js';
+import { hasCap, isCapSeason } from '../lib/eggs.js';
 
 /**
  * The board.
@@ -241,12 +242,21 @@ function Square({ node, disc, reachable, isActive, interactive, onPick, onPrevie
 function Pawns({ node, players, guildsById }) {
   if (!node) return null;
   const spread = players.length > 1 ? 1 : 0;
+  const inSeason = isCapSeason();
 
   return (
     <>
       {players.map((p, i) => {
         const guild = guildsById[p.guildId];
         const angle = (i / players.length) * Math.PI * 2;
+        const cap = hasCap(p) && (
+          // Worn either way. Out of season it sits crooked, which is the joke.
+          <span
+            className={`pawn__cap ${inSeason ? '' : 'pawn__cap--illegal'}`}
+            title={inSeason ? TOKEN_LABEL.teekkarilakki : T.capIllegal}
+            aria-hidden="true"
+          />
+        );
         return (
           <span
             key={p.id}
@@ -260,6 +270,7 @@ function Pawns({ node, players, guildsById }) {
             }}
             title={`${guild?.name ?? p.name} - ${p.op} op`}
           >
+            {cap}
             <span className="pawn__body">{initials(guild?.name ?? p.name)}</span>
           </span>
         );

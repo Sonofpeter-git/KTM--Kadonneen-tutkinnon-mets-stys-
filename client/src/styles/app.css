@@ -731,6 +731,114 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
+/* An egg toast sits at the top, under the topbar: that is where eyes already
+   are, and it can never land on top of an error toast at the bottom. It
+   pulses until tapped, because not being missed is its only job. */
+.toast--good {
+  top: 3.5rem;
+  bottom: auto;
+  background: var(--green);
+  color: var(--on-accent);
+  font-weight: 600;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.chip--dim { background: transparent; color: var(--text-faint); }
+
+/* ----------------------------------------------------------- easter eggs */
+
+.log__line--egg { color: var(--yellow); font-weight: 700; }
+
+.flash-overlay--egg .flash-overlay__shout { color: var(--team, var(--yellow)); }
+.flash-overlay__kicker {
+  margin: 0;
+  color: var(--yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: clamp(0.8rem, 3vw, 1.2rem);
+}
+
+.btn__mock {
+  margin-left: auto;
+  font-style: italic;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* The Teekkarilakki: white crown, black band. Worn straight in season. */
+.pawn__cap {
+  position: absolute;
+  left: 50%;
+  top: -0.3rem;
+  width: 0.8rem;
+  height: 0.38rem;
+  translate: -50% 0;
+  background: #f4f4f4;
+  border-bottom: 2px solid #0b0b0b;
+  border-radius: 50% 50% 0 0;
+  z-index: 1;
+}
+.pawn__cap--illegal { rotate: -28deg; translate: -30% 0; }
+
+.rules__count { margin: 0; color: var(--yellow); font-size: 0.8rem; }
+.rules__locked dt { color: var(--text-faint); letter-spacing: 0.2em; }
+.rules__fresh { color: var(--yellow); font-style: normal; font-weight: 400; }
+.finished__noeggs { margin: 0.3rem 0 0; color: var(--text-faint); font-size: 0.8rem; }
+.finished__heading--eggs { margin-top: 1.4rem; }
+
+/* Room-code themes. Cosmetic only, and each one is visible the whole game. */
+
+/* KELA: the colour of a waiting room, and every application is pending. */
+.shell--kela .topbar {
+  background: #e6dcc2;
+  color: #2d2a22;
+  border-bottom: 3px double #8a7d5c;
+}
+.shell--kela .topbar__turn em { color: #5c5443; }
+/* The buttons would otherwise inherit the dark form-ink onto their dark fill. */
+.shell--kela .iconbtn { background: #f3ecd9; border-color: #8a7d5c; color: #2d2a22; }
+.shell--kela .iconbtn:hover { background: #fffaf0; }
+.shell--kela .topbar::after {
+  content: 'Hakemus käsittelyssä';
+  padding: 0.1rem 0.4rem;
+  border: 2px solid #9b2c22;
+  color: #9b2c22;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  rotate: -4deg;
+  white-space: nowrap;
+}
+.shell--kela .board__image { filter: sepia(0.75) saturate(0.6) brightness(0.8); }
+
+/* WAPP: serpentine streamers along the top edge of the board, drifting. */
+.shell--wappu .stage::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0.45rem;
+  z-index: 3;
+  background: repeating-linear-gradient(
+    115deg,
+    var(--yellow) 0 1rem, var(--red) 1rem 2rem, var(--blue) 2rem 3rem, var(--green) 3rem 4rem
+  );
+  background-size: 300% 100%;
+  animation: shimmer 6s linear infinite;
+}
+.shell--wappu .topbar { border-bottom-color: var(--yellow); }
+
+/* SAUN: warm, and fogged at the bottom of the screen like a sauna window. */
+.shell--sauna .board__image { filter: sepia(0.3) saturate(1.2) brightness(0.9) hue-rotate(-10deg); }
+.shell--sauna .stage::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 35%;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(255, 244, 230, 0.28), transparent);
+}
+
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 860px) {
@@ -776,6 +884,10 @@
   .shell--aside .sidebar { transform: none; }
 
   .square__label { font-size: 0.62rem; }
+
+  /* The KELA stamp would squeeze the team name out of a phone-width topbar;
+     the beige bar and sepia map still carry the joke on their own. */
+  .shell--kela .topbar::after { display: none; }
 
   /* Four buttons plus the code/turn readout don't fit a phone-width topbar,
      so they collapse behind a burger and drop down as a panel instead. */

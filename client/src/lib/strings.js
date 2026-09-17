@@ -7,6 +7,8 @@
  * English is a single-file change.
  */
 
+import { EGGS, eggTier } from './eggs.js';
+
 export const TOKEN_LABEL = {
   op40: '40 op',
   op60: '60 op',
@@ -79,6 +81,9 @@ export function rules(unit) {
     { title: 'Juomat ja vuoro', body: 'Juomavelkainen joukkue ohitetaan, ei odoteta - vuoro siirtyy seuraavalle. Jos kaikki ovat velkaa, vuoro on auki ja ensimmäisenä juonut saa sen.' },
     { title: 'Tutkintouudistus', body: `Suurin kurssi suoritetaan uudelleen - opintopisteet säilyvät, mutta sen ${u.plural} juodaan uudelleen.` },
     { title: 'Voitto', body: 'Ensimmäinen kotiin päässyt joukkue, jolla on vähintään 300 op. Muut sijat ratkeavat sen hetken opintopisteillä.' },
+    // The only hint that the room-code eggs exist. Without it nobody ever
+    // types KELA and the whole ambient tier goes undiscovered.
+    { title: 'Löydöt', body: 'Peliin on piilotettu kahdeksan löytöä. Huonekoodilla on väliä, ja lakkia pidetään vapusta syyskuun loppuun.' },
     { title: 'Jos kaikki kiekot käännetty ennen kuin kukaan valmistuu', body: 'Ensimmäinen kotiin päässyt saa +80 op ja voittaa.' },
   ];
 }
@@ -126,6 +131,8 @@ export const T = {
   drinkToClaim: 'Juo ja ota vuoro',
   drinksDone: 'Juotu!',
   holdToConfirm: 'pidä 1s',
+  chickenedOut: 'Et sä uskalla.',
+  capIllegal: 'Lakkikausi on ohi. Pidät sitä silti.',
   chooseSquare: 'Valitse ruutu johon liikut',
   canMoveLess: 'Saat liikkua vähemmän kuin noppa näyttää.',
   fly: 'Lennä',
@@ -168,6 +175,13 @@ export const T = {
 
   // rules
   rules: 'Säännöt',
+
+  // easter eggs
+  eggs: 'Löydöt',
+  eggsFoundSuffix: 'löydetty',
+  eggsTonight: 'tänään',
+  eggsHeading: 'Yön löydöt',
+  eggsNone: 'Ei löytöjä. Huonekoodilla on väliä.',
 
   // admin
   admin: 'Pelinjohto',
@@ -265,6 +279,8 @@ export function describeEvent(event, nameOf, unit) {
     case 'TOKEN_UUDISTUS_LOST': return `${who} menetti ${event.op} op`;
     case 'TOKEN_UUDISTUS_NOOP': return `${who} ei ole vielä suorittanut mitään`;
     case 'KANDI_REACHED': return `${who} on suorittanut Kandin!`;
+    case 'EGG_FOUND':
+      return `${who} löysi: ${EGGS[event.egg]?.title ?? event.egg} (${eggTier(event.egg)})`;
     case 'TOKEN_MUUT_JUO': return `${who}: muut juo! (${event.affected.length})`;
     case 'TOKEN_DEFERRED': return `${who} jätti kiekon kääntämättä`;
     case 'PVP_ASSIGNED': return `${who} määräsi ${u.gen}: ${nameOf(event.targetId)}`;

@@ -719,3 +719,115 @@ test('the same seed replays the same game', () => {
     act(b, { type: 'ROLL', playerId: activePlayerId(b) }).state.turnState.roll,
   );
 });
+
+/* ------------------------------------------------------------ easter eggs */
+
+const eggsIn = (events) => events.filter((e) => e.type === 'EGG_FOUND').map((e) => e.egg);
+
+/** p1 steps home to Turku from next door, with no disc left there to resolve. */
+function comeHome(state) {
+  revealAllExcept(state, []);
+  player(state, 'p1').nodeId = board.node('turku').edges.find((e) => e.type === 'land').target;
+  state = forceRoll(state, 4, 1);
+  state = act(state, { type: 'ROLL', playerId: 'p1' }).state;
+  return act(state, { type: 'MOVE', playerId: 'p1', targetId: 'turku' });
+}
+
+test('egg: the border guard remembers you on the fourth failure, and only then', () => {
+  let state = startedGame();
+  const perAttempt = [];
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    player(state, 'p1').nodeId = 'haaparanta';
+    player(state, 'p1').drinksOwed = 0;
+    state.turnState.activeIndex = 0;
+    state.turnState.phase = PHASES.BORDER_ROLL;
+    state = forceRoll(state, 6, 3);
+
+    const result = act(state, { type: 'BORDER_ROLL', playerId: 'p1' });
+    perAttempt.push(eggsIn(result.events));
+    state = result.state;
+  }
+
+  assert.deepEqual(perAttempt, [[], [], [], ['rajavartija'], []]);
+  assert.equal(player(state, 'p1').borderFails, 5);
+});
+
+test('egg: graduating on exactly 300 is noticed, and 320 is not', () => {
+  const exact = startedGame();
+  player(exact, 'p1').op = 300;
+  assert.deepEqual(eggsIn(comeHome(exact).events), ['tasan_300']);
+
+  const over = startedGame();
+  player(over, 'p1').op = 320;
+  assert.deepEqual(eggsIn(comeHome(over).events), []);
+});
+
+test('egg: one team taking all three 80op discs', () => {
+  let state = startedGame();
+  const p = player(state, 'p1');
+  p.op = 160;
+  p.tokens = [
+    { kind: 'op80', op: 80, drinks: 3 },
+    { kind: 'op80', op: 80, drinks: 3 },
+  ];
+
+  state = arriveAt(state, 'tampere', 'op80');
+  const { events } = act(state, { type: 'RESOLVE', playerId: 'p1', choice: { action: 'OPEN_NOW' } });
+
+  assert.deepEqual(eggsIn(events), ['kolmoisosuma']);
+  const types = events.map((e) => e.type);
+  assert.ok(
+    types.indexOf('EGG_FOUND') > types.indexOf('TOKEN_OP'),
+    'must follow TOKEN_OP, or the client flashes a plain "80 op" instead of the egg',
+  );
+});
+
+test('egg: the sober winner has to have drunk less than every rival, not just one', () => {
+  const trio = { ids: ['p1', 'p2', 'p3'], guildIds: ['digit', 'tik', 'otit'] };
+
+  const sober = startedGame(trio);
+  player(sober, 'p1').op = 320;
+  player(sober, 'p1').drinksTaken = 2;
+  player(sober, 'p2').drinksTaken = 5;
+  player(sober, 'p3').drinksTaken = 3;
+  const won = comeHome(sober);
+  assert.deepEqual(eggsIn(won.events), ['raitis_voittaja']);
+  assert.deepEqual(won.state.eggsFound, [{ egg: 'raitis_voittaja', playerId: 'p1' }]);
+
+  const tied = startedGame(trio);
+  player(tied, 'p1').op = 320;
+  player(tied, 'p1').drinksTaken = 3;
+  player(tied, 'p2').drinksTaken = 5;
+  player(tied, 'p3').drinksTaken = 3;
+  assert.deepEqual(eggsIn(comeHome(tied).events), [], 'a tie with a rival is not sober');
+});
+
+test('egg: a rival finishing one disc short of 300', () => {
+  const state = startedGame();
+  player(state, 'p1').op = 320;
+  player(state, 'p2').op = 280;
+
+  const { events, state: after } = comeHome(state);
+  assert.deepEqual(eggsIn(events), ['yksi_vajaa']);
+  assert.equal(after.eggsFound[0].playerId, 'p2', 'credited to the team that fell short');
+});
+
+test('egg: an egg already found this game is not announced twice', () => {
+  const state = startedGame();
+  state.eggsFound = [{ egg: 'tasan_300', playerId: 'p2' }];
+  player(state, 'p1').op = 300;
+
+  const { events, state: after } = comeHome(state);
+  assert.deepEqual(eggsIn(events), []);
+  assert.equal(after.eggsFound.length, 1);
+  assert.ok(!after.log.some((e) => e.type === 'EGG_FOUND'), 'and never reaches the log');
+});
+
+test('egg: a room saved before eggs existed still records one', () => {
+  const state = startedGame();
+  delete state.eggsFound;
+  player(state, 'p1').op = 300;
+
+  assert.deepEqual(comeHome(state).state.eggsFound, [{ egg: 'tasan_300', playerId: 'p1' }]);
+});

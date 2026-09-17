@@ -47,6 +47,10 @@ export function createRoom({
     createdAt,
     costMode,
     drinkUnit,
+    // Eggs found this game. Kept on the room, not just broadcast as events,
+    // because the client feed is a capped window - a find made early would
+    // scroll away before anyone reached the endgame card that lists it.
+    eggsFound: [],
     players: [],
     turnOrder: [],
     turnState: null,
@@ -98,8 +102,28 @@ export function applyAction(state, action, deps) {
     default: throw new GameError('UNKNOWN_ACTION', `unknown action ${action.type}`);
   }
 
-  draft.log = [...draft.log, ...events].slice(-LOG_LIMIT);
-  return { state: draft, events };
+  const kept = recordEggs(draft, events);
+  draft.log = [...draft.log, ...kept].slice(-LOG_LIMIT);
+  return { state: draft, events: kept };
+}
+
+/**
+ * File every EGG_FOUND onto the room, and drop the ones already found.
+ *
+ * Every egg passes through here, so no hook site has to remember whether it
+ * has fired before - they can all emit unconditionally whenever their
+ * condition reads true, which is the only reason the conditions stay one-liners.
+ */
+function recordEggs(state, events) {
+  if (!events.some((e) => e.type === 'EGG_FOUND')) return events;
+  state.eggsFound ??= [];   // rooms persisted before eggs existed
+
+  return events.filter((event) => {
+    if (event.type !== 'EGG_FOUND') return true;
+    if (state.eggsFound.some((f) => f.egg === event.egg)) return false;
+    state.eggsFound.push({ egg: event.egg, playerId: event.playerId });
+    return true;
+  });
 }
 
 /* ------------------------------------------------------------------ lobby */
@@ -133,6 +157,7 @@ function join(state, { playerId, name }) {
     dice: 4,
     tokens: [],
     place: null,
+    borderFails: 0,
   });
 
   return [{ type: 'PLAYER_JOINED', playerId, role }];
@@ -191,6 +216,7 @@ function startGame(state, { playerId }, deps) {
     p.dice = 4;
     p.tokens = [];
     p.place = null;
+    p.borderFails = 0;
   }
 
   state.board.tokens = T.dealTokens(state, deps.board.cityIds);
@@ -399,6 +425,9 @@ function openStandingToken(state, { playerId }, deps) {
   return events;
 }
 
+/** Failed guard rolls before he starts greeting you personally. */
+const EGG_BORDER_FAILS = 4;
+
 /** Rulebook step 3: the border guard at Haaparanta-Tornio. */
 function borderRoll(state, { playerId }, deps) {
   const player = requireTurn(state, playerId, PHASES.BORDER_ROLL);
@@ -414,7 +443,13 @@ function borderRoll(state, { playerId }, deps) {
   }
 
   player.drinksOwed += T.BORDER_FAIL_COST;
+  player.borderFails = (player.borderFails ?? 0) + 1;
   events.push({ type: 'BORDER_BLOCKED', playerId, drinks: T.BORDER_FAIL_COST });
+
+  if (player.borderFails === EGG_BORDER_FAILS) {
+    events.push({ type: 'EGG_FOUND', playerId, egg: 'rajavartija' });
+  }
+
   events.push(...endTurn(state, deps));
   return events;
 }
@@ -528,6 +563,9 @@ function endTurn(state, deps) {
   return events;
 }
 
+/** Finishing here means the last disc you needed was the one you never turned. */
+const EGG_ONE_DISC_SHORT = 280;
+
 /**
  * The game ends the instant a team collects its papers at home.
  *
@@ -543,6 +581,9 @@ function checkGraduation(state, player) {
 
   if (player.op >= T.OP_TO_GRADUATE) {
     events.push({ type: 'GRADUATED', playerId: player.id, op: player.op });
+    if (player.op === T.OP_TO_GRADUATE) {
+      events.push({ type: 'EGG_FOUND', playerId: player.id, egg: 'tasan_300' });
+    }
   } else if (boardExhausted) {
     player.op += 80;
     events.push({ type: 'GRADUATED_EXHAUSTED', playerId: player.id, bonus: 80, op: player.op });
@@ -551,7 +592,29 @@ function checkGraduation(state, player) {
   }
 
   finish(state, player.id);
+  events.push(...endgameEggs(state, player));
   events.push({ type: 'GAME_FINISHED', winnerId: player.id, standings: state.standings });
+  return events;
+}
+
+/** Eggs that can only be judged once every team's final score is in. */
+function endgameEggs(state, winner) {
+  const events = [];
+  const rivals = contenders(state).filter((p) => p.id !== winner.id);
+
+  // Winning on the lowest tab in the room. Needs rivals to be lower than, so a
+  // one-team game cannot claim it.
+  const drunk = (p) => p.drinksTaken ?? 0;
+  if (rivals.length > 0 && rivals.every((p) => drunk(p) > drunk(winner))) {
+    events.push({ type: 'EGG_FOUND', playerId: winner.id, egg: 'raitis_voittaja' });
+  }
+
+  // One disc short, for somebody who did not win.
+  const soClose = rivals.find((p) => p.op === EGG_ONE_DISC_SHORT);
+  if (soClose) {
+    events.push({ type: 'EGG_FOUND', playerId: soClose.id, egg: 'yksi_vajaa' });
+  }
+
   return events;
 }
 

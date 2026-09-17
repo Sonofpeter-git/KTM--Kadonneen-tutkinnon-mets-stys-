@@ -143,6 +143,12 @@ export function applyToken(state, player, kind, openCost) {
       if (before < OP_KANDI && player.op >= OP_KANDI) {
         events.push({ type: 'KANDI_REACHED', playerId: player.id, op: player.op });
       }
+      // All three 80op discs in the bag, to one team. Emitted after TOKEN_OP on
+      // purpose: the client's flash picker takes the last match in a batch, so
+      // this order is what puts the egg on screen instead of a plain "80 op".
+      if (kind === 'op80' && player.tokens.filter((t) => t.kind === 'op80').length === TOKEN_POOL.op80) {
+        events.push({ type: 'EGG_FOUND', playerId: player.id, egg: 'kolmoisosuma' });
+      }
       break;
     }
 

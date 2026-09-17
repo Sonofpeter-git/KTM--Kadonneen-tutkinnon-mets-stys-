@@ -1,4 +1,5 @@
 import { T, unitLabels } from '../lib/strings.js';
+import { EGGS } from '../lib/eggs.js';
 import { Transcript } from './Scoreboard.jsx';
 import { guildName } from './ActionPanel.jsx';
 
@@ -6,6 +7,7 @@ import { guildName } from './ActionPanel.jsx';
 export default function Finished({ state, guildsById }) {
   const winner = state.players.find((p) => p.id === state.winnerId);
   const L = unitLabels(state.drinkUnit);
+  const found = (state.eggsFound ?? []).filter((f) => EGGS[f.egg]);
 
   return (
     <div className="finished">
@@ -38,6 +40,22 @@ export default function Finished({ state, guildsById }) {
           );
         })}
       </ol>
+
+      {/* The safety net. A find that flashed past while everyone was looking at
+          a drink is still here, on the one screen nobody skips. */}
+      <h2 className="finished__heading finished__heading--eggs">{T.eggsHeading}</h2>
+      {found.length === 0 ? (
+        <p className="finished__noeggs">{T.eggsNone}</p>
+      ) : (
+        <ul className="transcript">
+          {found.map(({ egg, playerId }) => (
+            <li key={egg} className="chip chip--good" title={EGGS[egg]?.blurb}>
+              {EGGS[egg]?.title ?? egg}
+              <em> · {guildName(guildsById, state.players.find((p) => p.id === playerId))}</em>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -13,8 +13,14 @@ import AdminSidebar from './components/AdminSidebar.jsx';
 import RulesPanel from './components/RulesPanel.jsx';
 import Finished from './components/Finished.jsx';
 import TokenFlash from './components/TokenFlash.jsx';
+import EggsPanel from './components/EggsPanel.jsx';
+import { EGGS, hasCap, isCapSeason, rememberEgg } from './lib/eggs.js';
+import { roomTheme } from './lib/roomThemes.js';
 
 const FLASH_DURATION_MS = 2000;
+
+// An egg is rare enough that two seconds is not a fair chance to notice it.
+const EGG_FLASH_MS = 6000;
 
 /** Which feed events are worth a full-screen flash, and what to show. */
 function toFlash(event, state) {
@@ -27,6 +33,10 @@ function toFlash(event, state) {
     case 'TOKEN_UUDISTUS_LOST':
       return { kind: 'UUDISTUS' };
     case 'KANDI_REACHED': return { kind: 'KANDI', guildId: guildOf(event.playerId) };
+    case 'EGG_FOUND':
+      return EGGS[event.egg]?.loud === 'flash'
+        ? { kind: 'EGG', egg: event.egg, guildId: guildOf(event.playerId), ms: EGG_FLASH_MS }
+        : null;
     default: return null;
   }
 }
@@ -51,6 +61,8 @@ export default function App() {
 
   const [flash, setFlash] = useState(null);
   const flashTimerRef = useRef(null);
+  const [eggsOpen, setEggsOpen] = useState(false);
+  const [eggToast, setEggToast] = useState(null);
 
   // Sound is a second reading of the same feed, so it gets its own cursor
   // through the same hook rather than sharing this one.
@@ -66,15 +78,39 @@ export default function App() {
     for (const event of events) {
       const candidate = toFlash(event, state);
       if (candidate) next = candidate;
+
+      // Every find goes into this device's collection whatever its tier, and
+      // the quieter tiers leave a Toast behind - the one thing here that waits
+      // to be tapped rather than timing out on its own.
+      if (event.type === 'EGG_FOUND') {
+        rememberEgg(event.egg);
+        if (EGGS[event.egg]?.loud === 'toast') setEggToast(event.egg);
+      }
     }
     if (!next) return;
 
     clearTimeout(flashTimerRef.current);
     setFlash(next);
-    flashTimerRef.current = setTimeout(() => setFlash(null), FLASH_DURATION_MS);
+    flashTimerRef.current = setTimeout(() => setFlash(null), next.ms ?? FLASH_DURATION_MS);
   });
 
   useEffect(() => () => clearTimeout(flashTimerRef.current), []);
+
+  const theme = roomTheme(state?.code);
+  useEffect(() => {
+    if (theme) rememberEgg('huonekoodi');
+  }, [theme]);
+
+  // A crooked cap on a one-rem pawn is too small to count as noticed, so an
+  // out-of-season cap also raises the toast - once per room, not per render.
+  const illegalCap = !isCapSeason() && !!state?.players?.some(hasCap);
+  const capToastRoomRef = useRef(null);
+  useEffect(() => {
+    if (!illegalCap || capToastRoomRef.current === state?.code) return;
+    capToastRoomRef.current = state?.code;
+    rememberEgg('lakkikausi');
+    setEggToast('lakkikausi');
+  }, [illegalCap, state?.code]);
 
   const guildsById = useMemo(
     () => Object.fromEntries(guilds.map((g) => [g.id, g])),
@@ -130,7 +166,13 @@ export default function App() {
   const showBoard = board && state.status !== 'LOBBY';
 
   return (
-    <main className={`shell ${asideOpen ? 'shell--aside' : ''}`}>
+    <main
+      className={[
+        'shell',
+        asideOpen ? 'shell--aside' : '',
+        theme && `shell--${theme}`,
+      ].filter(Boolean).join(' ')}
+    >
       {banner}
 
       <header className="topbar">
@@ -165,6 +207,9 @@ export default function App() {
           </button>
           <button className="iconbtn" onClick={() => { setAsideOpen((v) => !v); setMenuOpen(false); }}>
             {T.standings}
+          </button>
+          <button className="iconbtn" onClick={() => { setEggsOpen((v) => !v); setMenuOpen(false); }}>
+            {T.eggs}
           </button>
           <button
             className="iconbtn"
@@ -250,15 +295,27 @@ export default function App() {
       )}
 
       {rulesOpen && <RulesPanel unit={state.drinkUnit} onClose={() => setRulesOpen(false)} />}
+      {eggsOpen && <EggsPanel found={state.eggsFound} onClose={() => setEggsOpen(false)} />}
 
       {error && <Toast message={error} onDismiss={dismissError} />}
+      {eggToast && (
+        <Toast
+          variant="good"
+          message={`${EGGS[eggToast].title} - ${EGGS[eggToast].blurb}`}
+          onDismiss={() => setEggToast(null)}
+        />
+      )}
     </main>
   );
 }
 
-function Toast({ message, onDismiss }) {
+function Toast({ message, onDismiss, variant }) {
   return (
-    <button className="toast" onClick={onDismiss} aria-live="polite">
+    <button
+      className={`toast ${variant ? `toast--${variant}` : ''}`}
+      onClick={onDismiss}
+      aria-live="polite"
+    >
       {message}
     </button>
   );

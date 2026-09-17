@@ -3,20 +3,35 @@ import {
   T, drinkCount, unitLabels, PHASE_LABEL, TOKEN_LABEL,
   openNowCostLabel, waitToOpenCostLabel, openDiscHereCostLabel,
 } from '../lib/strings.js';
+import { rememberEgg } from '../lib/eggs.js';
 
 const DRINK_HOLD_MS = 1000;
+
+/** Early releases in a row before the button starts commenting on it. */
+const BAILS_BEFORE_MOCKING = 5;
 
 /**
  * A tap clears drinks by accident too easily. Confirming the drink actually
  * happened needs a full second of held intent, not a stray touch.
+ *
+ * It also notices when you keep starting and never finishing. The mockery
+ * stays on the button until you finally see a hold through, so it cannot be
+ * missed - it is sitting on the one thing you are trying to press.
  */
 function HoldButton({ className, holdMs, onConfirm, children }) {
   const [holding, setHolding] = useState(false);
+  const [mocked, setMocked] = useState(false);
   const timerRef = useRef(null);
+  const armedRef = useRef(false);
+  const bailsRef = useRef(0);
 
   const start = () => {
+    armedRef.current = true;
     setHolding(true);
     timerRef.current = setTimeout(() => {
+      armedRef.current = false;
+      bailsRef.current = 0;
+      setMocked(false);
       setHolding(false);
       onConfirm();
     }, holdMs);
@@ -24,12 +39,21 @@ function HoldButton({ className, holdMs, onConfirm, children }) {
   const cancel = () => {
     clearTimeout(timerRef.current);
     setHolding(false);
+    // pointerleave follows pointerup, so only the first release after a press
+    // counts - otherwise every bail would be tallied twice.
+    if (!armedRef.current) return;
+    armedRef.current = false;
+    bailsRef.current += 1;
+    if (bailsRef.current >= BAILS_BEFORE_MOCKING && !mocked) {
+      setMocked(true);
+      rememberEgg('et_uskalla');
+    }
   };
 
   return (
     <button
       type="button"
-      className={`${className} ${holding ? 'btn--holding' : ''}`}
+      className={`${className} ${holding ? 'btn--holding' : ''} ${mocked ? 'btn--mocked' : ''}`}
       style={{ '--holdMs': `${holdMs}ms` }}
       onPointerDown={start}
       onPointerUp={cancel}
@@ -38,6 +62,7 @@ function HoldButton({ className, holdMs, onConfirm, children }) {
     >
       <span className="btn__fill" aria-hidden="true" />
       {children}
+      {mocked && <span className="btn__mock">{T.chickenedOut}</span>}
     </button>
   );
 }

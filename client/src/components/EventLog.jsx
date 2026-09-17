@@ -38,6 +38,7 @@ export default function EventLog({ feed, state, guildsById }) {
 }
 
 function tone(type) {
+  if (type === 'EGG_FOUND') return 'egg';
   if (
     type.startsWith('GRADUATED') || type === 'TOKEN_OP' || type === 'TOKEN_LAKKI' ||
     type === 'KANDI_REACHED'

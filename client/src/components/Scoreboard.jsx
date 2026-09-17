@@ -1,4 +1,5 @@
 import { T, TOKEN_LABEL, unitLabels } from '../lib/strings.js';
+import { EGGS } from '../lib/eggs.js';
 
 const GOAL = 300;
 
@@ -9,6 +10,8 @@ const GOAL = 300;
 export default function Scoreboard({ state, guildsById, activeId, boardById }) {
   const contenders = state.players.filter((p) => p.guildId && p.role !== 'SPECTATOR');
   const ranked = [...contenders].sort((a, b) => b.op - a.op);
+  // Nobody believes a sober winner, so the scoreboard marks them for good.
+  const soberWinner = state.eggsFound?.find((f) => f.egg === 'raitis_voittaja')?.playerId;
 
   return (
     <section className="scoreboard">
@@ -47,7 +50,10 @@ export default function Scoreboard({ state, guildsById, activeId, boardById }) {
               <span className="team__dot" aria-hidden="true" />
 
               <span className="team__id">
-                <strong>{guild?.name ?? p.name}</strong>
+                <strong>
+                  {guild?.name ?? p.name}
+                  {soberWinner === p.id && <span title={EGGS.raitis_voittaja.blurb}>*</span>}
+                </strong>
                 <em>
                   {boardById?.get(p.nodeId)?.name || guild?.city || '-'}
                   {home && ` · ${T.atHome}`}
