@@ -59,33 +59,6 @@ services:
   # docker socket and reconfigures itself from VIRTUAL_HOST/LETSENCRYPT_HOST
   # above - no nginx.conf to hand-write. Only useful once DOMAIN/.env points
   # somewhere and DNS for it resolves to this host.
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:1
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-
-  # Companion that requests and renews the Let's Encrypt certificate for
-  # LETSENCRYPT_HOST, using nginx-proxy's own volumes to hand the cert over.
-  acme-companion:
-    image: nginxproxy/acme-companion:2
-    restart: unless-stopped
-    environment:
-      DEFAULT_EMAIL: "${LETSENCRYPT_EMAIL:-}"
-    volumes_from:
-      - nginx-proxy
-    volumes:
-      - certs:/etc/nginx/certs
-      - acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - nginx-proxy
 
 volumes:
   redis-data:
